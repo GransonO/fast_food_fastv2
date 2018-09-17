@@ -1,0 +1,123 @@
+body {
+    background-image: url(../img/food_doodle.png);    
+    background-attachment: fixed;
+    color: rgb(92, 92, 92);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+
+select{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: grey;
+    border-radius: 25%;
+    border: 2px  rgb(146, 99, 255) solid;
+    font-size: 18px;
+
+}
+
+.data { 
+    position: absolute;
+    left: 90%;
+}
+
+.login {
+    text-decoration: rgb(146, 99, 255);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+a{
+    text-decoration: rgb(146, 99, 255);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.container {
+    text-align: center;
+    color: rgb(92, 92, 92);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.logo {
+    height: 70px;
+    width: 70px;
+    transition: 500ms;
+}
+
+.logo:hover {
+    height: 80px;
+    width: 80px;
+    color: rgb(71, 71, 71);
+    transform: rotateY(180deg);
+}
+
+.top-items {
+    width: 100;
+    text-align: center;
+    margin-top: 3%;
+    margin-right: 10%;
+    margin-left: 10%;
+}
+
+.items-table {
+    text-align: center;
+    width: 30%;
+}
+
+.food-name {
+    text-align: start;
+    margin-left: 10px;
+    color: rgb(92, 92, 92);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+.text-right {
+    text-align: end;
+    float: right;
+    margin-right: 10px;
+    color: rgb(92, 92, 92);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+
+.text-left {
+    text-align: start;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    color: rgb(92, 92, 92);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.text-center {
+    text-align: center;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    color: rgb(92, 92, 92);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.cart {
+    float: right;
+    margin-top: -8%;
+    margin-right: 10px;
+    transition: 1000ms cubic-bezier(0.075, 0.82, 0.165, 1); 
+}
+
+.cart:hover {
+    width: 60px;
+}
+
+.order-item {
+    width: 300px;
+    height: 200px;
+}
+
+.food-img {
+    border-radius: 10%;
+    transition: 1000ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.food-img:hover {
+    width: 310px;
+}
+.hungry{
+    margin-top: 5%;
+}

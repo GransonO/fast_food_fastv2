@@ -312,8 +312,14 @@ ul li:hover{
 .related-orders {
     width: 300px;
     margin-left: 5%;
+    margin-right: 5%;
 }
 .related-orders-td {
     margin-right: 5%;
     margin-left: 5%;
+}
+
+.related-container {
+    text-align: center;
+    width: 100%;
 }

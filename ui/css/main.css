@@ -323,3 +323,32 @@ ul li:hover{
     text-align: center;
     width: 100%;
 }
+
+.login-container {
+    text-align: center;
+}
+
+.login-element {
+    width: 30%;
+    height: 600px;
+    margin-top: 10%;
+    margin-left: 30%;
+    background-color: rgba(253, 253, 253, 0.3);
+    border-radius: 10%;
+}
+
+.login-img {
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+}
+.login-img:hover {
+    width: 55px;
+    height: 55px;
+}
+.top-margin{
+    margin-top: 10px;
+}
+.social {
+    text-align: center;
+}

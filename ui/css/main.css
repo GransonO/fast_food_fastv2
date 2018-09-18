@@ -112,11 +112,11 @@ a{
 
 .food-img {
     border-radius: 10%;
-    transition: 1000ms cubic-bezier(0.19, 1, 0.22, 1);
+    transition: 1000ms;
 }
 
 .food-img:hover {
-    width: 310px;
+    width: 302px;
 }
 .hungry{
     margin-top: 5%;
@@ -308,4 +308,12 @@ ul li:hover{
 .ordered-more-details h5 {
     text-align: left;
     font-size: 15px;
+}
+.related-orders {
+    width: 300px;
+    margin-left: 5%;
+}
+.related-orders-td {
+    margin-right: 5%;
+    margin-left: 5%;
 }

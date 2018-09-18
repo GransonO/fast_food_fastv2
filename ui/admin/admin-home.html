@@ -79,17 +79,26 @@
         </table>   
     </div>
     <div class="comments new-item">
-                <h2>Customers Comments</h2>                
+                <h2>Add New Item</h2>                
                 <img src="../img/foods/chinese.jpg" alt="New Image">
-                <br>               
-                <input class="" type="text" name="Food" placeholder="Food Name">
+                <br> 
+                <br> 
+                <select class="admin-custom-input">
+                        <option value="#">Select food category</option>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Munchies">Munchies</option>
+                        <option value="Drinks">Drinks</option>
+                </select>              
+                <input class="admin-custom-input" type="text" name="Food" placeholder="Food Name">
                 <br>                             
-                <input type="text" name="price" placeholder="Food Price">
+                <input class="admin-custom-input" type="text" name="price" placeholder="Food Price">
                 <br>                             
-                <textarea type="text" name="Food" placeholder="Food Name"></textarea>
+                <textarea class="admin-custom-textarea" type="text" name="Food" placeholder="Brief detail of the food"></textarea>
                 <br>
-                <button>Submit</button>
-                <button>Cancel</button>
+                <button class="admin-okay">Submit</button>
+                <button class="admin-cancel">Cancel</button>
         </div>
 </div>
 

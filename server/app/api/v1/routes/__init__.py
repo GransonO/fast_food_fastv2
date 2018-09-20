@@ -44,5 +44,5 @@ class User(Resource):
 
 api.add_resource(All,'/v1/orders')
 api.add_resource(Specific,'/v1/orders/<int:num>')
-api.add_resource(AllUsers,'/v1/orders/users')
-api.add_resource(User,'/v1/user/<int:info>')
+api.add_resource(AllUsers,'/v1/users')
+api.add_resource(User,'/v1/user/<int:info')

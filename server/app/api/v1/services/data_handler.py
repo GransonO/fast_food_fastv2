@@ -81,6 +81,7 @@ class DataSet():
         '''Deletes an item from the admins list'''
         for item in DataSet.ORDERS:
             if item['id'] == num:
-                DataSet.ORDERS.pop(item)
-                
+                DataSet.ORDERS.remove(item)  
+
+        return DataSet.ORDERS           
 #=========================End Of Administrators Transactions==================================

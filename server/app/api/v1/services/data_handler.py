@@ -11,7 +11,7 @@ class DataSet():
         else:
             return DataSet.ORDERS
 
-    def add_new_entry(self,name,Description,quantity,price,vendor,location,image):
+    def add_new_entry(self,name,Description,quantity,price,vendor,location,image,identifier):
         '''Add new item to list'''
         item_id = len(DataSet.ORDERS) + 1
         item = {
@@ -22,7 +22,8 @@ class DataSet():
             'price' : price,
             'vendor' : vendor,
             'location' : location,
-            'image' : image
+            'image' : image,
+            'identifier' : identifier
         }
         DataSet.ORDERS.append(item)
         return DataSet.ORDERS

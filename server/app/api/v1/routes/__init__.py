@@ -8,7 +8,7 @@ app = create_app('Developing')
 api = Api(app)
 post_order = api.model('Posting Order',{'name':fields.String('Name of the item'),'Description' : fields.String('Brief description of the item'),
 'quantity' : fields.Integer('Total count of items'),'price': fields.Integer('Selling price'),'vendor':fields.String('Name of Vendor'),
-'location':fields.String('Where located'),'image':fields.String('Your image url')})
+'location':fields.String('Where located'),'image':fields.String('Your image url'),'identifier':fields.String('The items key')})
 
 #For all Orders
 class All(Resource):
@@ -21,7 +21,7 @@ class All(Resource):
     def post(self):
         '''Adds a new item to the items list'''
         sent_data = api.payload
-        result = DataSet.add_new_entry(self,sent_data['name'],sent_data['Description'],sent_data['quantity'],sent_data['price'],sent_data['vendor'],sent_data['location'],sent_data['image'])
+        result = DataSet.add_new_entry(self,sent_data['name'],sent_data['Description'],sent_data['quantity'],sent_data['price'],sent_data['vendor'],sent_data['location'],sent_data['image'],sent_data['identifier'])
         return {'data': result}
         
 

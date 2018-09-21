@@ -1,6 +1,7 @@
 from flask import Flask,Blueprint
 from flask_restplus import Resource,Api
 from app import create_app      #Used . to import from a top level package
+from ..services.data_handler import DataSet  #package for data manipulations
 
 app = create_app('Developing')
 
@@ -9,7 +10,9 @@ api = Api(app)
 #For all Orders
 class All(Resource):
     def get(self):
-        return '<h3>Get all entries</h3>'
+        '''Retrieves all items in the Dataset'''
+        result = DataSet.get_all_orders(self)
+        return {'data': result}, 200
 
     def post(self):
         return '<h3>Post an entry</h3>'
@@ -45,4 +48,4 @@ class User(Resource):
 api.add_resource(All,'/v1/orders')
 api.add_resource(Specific,'/v1/orders/<int:num>')
 api.add_resource(AllUsers,'/v1/users')
-api.add_resource(User,'/v1/user/<int:info')
+api.add_resource(User,'/v1/user/<int:info>')

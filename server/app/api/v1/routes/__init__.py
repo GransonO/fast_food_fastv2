@@ -26,7 +26,7 @@ class All(Resource):
         quantity = sent_data['quantity']
         price = sent_data['price']
         vendor = sent_data['vendor']
-        location sent_data['location']
+        location = sent_data['location']
         image = sent_data['image']
         identifier = sent_data['identifier']
 
@@ -37,7 +37,9 @@ class All(Resource):
 #For Specific
 class Specific(Resource):
     def get(self,num):
-        return '<h3>Get a specific entry number {} </h3>'.format(num)
+        '''Gets a specific order as requested'''
+        result = DataSet.get_specific_entry(self, num)
+        return {'data':result}
 
     def put(self,num):
         return '<h3>Update specific entry number {} </h3>'.format(num) 

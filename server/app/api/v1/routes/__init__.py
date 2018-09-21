@@ -21,7 +21,16 @@ class All(Resource):
     def post(self):
         '''Adds a new item to the items list'''
         sent_data = api.payload
-        result = DataSet.add_new_entry(self,sent_data['name'],sent_data['Description'],sent_data['quantity'],sent_data['price'],sent_data['vendor'],sent_data['location'],sent_data['image'],sent_data['identifier'])
+        name = sent_data['name']
+        description = sent_data['Description']
+        quantity = sent_data['quantity']
+        price = sent_data['price']
+        vendor = sent_data['vendor']
+        location sent_data['location']
+        image = sent_data['image']
+        identifier = sent_data['identifier']
+
+        result = DataSet.add_new_entry(self,name,description,quantity,price,vendor,location,image,identifier)
         return {'data': result}
         
 

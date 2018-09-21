@@ -13,6 +13,9 @@ post_order = api.model('Posting Order',{'name':fields.String('Name of the item')
 put_prop = api.model('Editing an entry', {'name':fields.String('Name of the item'),'Description' : fields.String('Brief description of the item'),
 'quantity' : fields.Integer('Total count of items'),'price': fields.Integer('Selling price'),'vendor':fields.String('Name of Vendor'),
 'location':fields.String('Where located'),'image':fields.String('Your image url'),'identifier':fields.String('The items key')})
+
+delete_prop = api.model('Deleting an item',{'uid': fields.String('The users id(Must be an admin )')})
+
 #For all Orders
 class All(Resource):
     def get(self):
@@ -62,8 +65,17 @@ class Specific(Resource):
         result = DataSet.update_entry(self,item_id,name,description,quantity,price,vendor,location,image,identifier)
         return {'data':result} 
 
+    @api.expect(delete_prop)
     def delete(self,num):
-        return '<h3>Delete specific entry number {} </h3>'.format(num)
+        '''Delete an item passed by Admin of account'''
+        delete_data = api.payload
+        user_id = delete_data['uid']
+
+        result = DataSet.delete_item(self,user_id,num)
+        return {'data':{
+            'delete_state': 'Successful',
+            'available_data' : result
+        }}
 
 #For All Users
 class AllUsers(Resource):

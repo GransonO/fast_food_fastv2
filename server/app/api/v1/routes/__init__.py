@@ -26,7 +26,7 @@ class All(Resource):
         quantity = sent_data['quantity']
         price = sent_data['price']
         vendor = sent_data['vendor']
-        location sent_data['location']
+        location  = sent_data['location']
         image = sent_data['image']
         identifier = sent_data['identifier']
 

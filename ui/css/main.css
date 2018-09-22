@@ -527,7 +527,8 @@ ul li:hover{
 }
 .profile-badges tr{
     margin-top: -1%;
-=======
+}
+
 .admin-cancel:hover {
     background-color: #fff;
     color:  rgba(255, 5, 5);
@@ -578,6 +579,7 @@ ul li:hover{
 .admin-history-details p {
     font-size: 0.8em;
 }
+
 .action-okay {    
     width: 100px;
     height: 30px;

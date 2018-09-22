@@ -272,7 +272,7 @@ ul li:hover{
 }
 .admin-custom-textarea{
     border-radius: 10px;
-    width: 80%;
+    width: 90%;
     height: 70px;
     background-color: rgba(255, 255, 255, 0.795);
     border: 2px solid rgb(255, 255, 255, o.5);
@@ -348,7 +348,7 @@ ul li:hover{
 }
 
 .admin-order-history table{
-    width: 80%;
+    width: 100%;
 }
 
 
@@ -365,6 +365,7 @@ ul li:hover{
     float: left;
     margin-right: 5%;
     margin-left: 5%;
+    margin-top: 10%;
 }
 .admin-history-details {
     font-size: 0.9em;
@@ -415,4 +416,61 @@ ul li:hover{
 .action-cancel:hover {
     background-color: #fff;
     color:  rgba(255, 5, 5);
+}
+
+.admin-profile-content {
+    display: flex;
+    width: 100%;
+}
+
+.performance-profile {
+    flex: 0.9;
+}
+
+.graph-profile {
+    flex: 1.6;
+    text-align: center;
+}
+
+.admin-profile {
+    flex: 0.5;
+}
+.admin-profile img{
+    width: 250px;
+    height: 250px;
+    border-radius: 10%;
+}
+.summary-item {
+    width: 150px;
+    height: auto;
+    text-align: center;
+    color: cornsilk;
+    background-color: rgba(116, 116, 116, 0.459);
+    border-radius: 10%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    float: left;
+    margin-right: 4%;
+}
+
+.summary-item h4 {
+    margin-top: -10px;
+}
+
+.graph {
+    width: 90%;
+    height: 300px;
+    margin-top: 1%;
+    background-image: url(../img/area_graph.png); 
+    background-repeat: no-repeat;
+    background-size: auto;
+}
+.buyer-complaints {
+    float: right;
+    margin-right: 10pc;
+    font-size: 14px;
+}
+.buyer-feedback {
+    float: left;
+    font-size: 14px;
 }

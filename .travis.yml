@@ -5,7 +5,7 @@ python:
 
 # command to install dependencies
 install:
-  - pip install -r server/requirements.txt
+  - pip install -r requirements.txt
   - pip install codecov
   - pip install pytest-cov
 
@@ -13,7 +13,7 @@ script:
 # scripts to run
   - coverage erase
   - coverage run server/app/test && coverage html
-  - py.test --cov-report term-missing --cov app -v
+  - py.test --cov-report term-missing --cov test -v
 
 
 after_success:

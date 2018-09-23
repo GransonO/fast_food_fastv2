@@ -1,6 +1,10 @@
 class DataSet():
 
+    ADMIN = []
     ORDERS = []
+
+    USERS = []
+    USER_ORDERS = []
 
 #=========================Handles Administrators Transactions==================================
     #Get all orders
@@ -63,7 +67,7 @@ class DataSet():
                     items['image'] = image
                     items['identifier'] = identifier
                     items_status = 0
-                    
+
                     break
                 else:
                     items_status = 1
@@ -73,5 +77,11 @@ class DataSet():
             else:
                 return DataSet.ORDERS
 
+    def delete_item(self,item_id,num):
+        '''Deletes an item from the admins list'''
+        for item in DataSet.ORDERS:
+            if item['id'] == num:
+                DataSet.ORDERS.remove(item)  
 
+        return DataSet.ORDERS           
 #=========================End Of Administrators Transactions==================================

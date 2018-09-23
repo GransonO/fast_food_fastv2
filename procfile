@@ -1,2 +1,2 @@
-heroku ps:scale web=1
+heroku ps
 web: python server/run.py 0.0.0.0:5000

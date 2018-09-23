@@ -44,4 +44,34 @@ class DataSet():
 
             return result
 
+    def update_entry(self,item_id,name,description,quantity,price,vendor,location,image,identifier):
+        '''Checks for passed id and edits content as passed'''
+        items_status = 0
+        if len(DataSet.ORDERS) < 1 :
+            return 'There are no items'
+
+        else:              
+            for items in DataSet.ORDERS:
+                if items['id'] == item_id:
+                    '''Get detail of specific item'''
+                    items['name'] = name
+                    items['description'] = description
+                    items['quantity'] = quantity
+                    items['price'] = price
+                    items['vendor'] = vendor
+                    items['location'] = location
+                    items['image'] = image
+                    items['identifier'] = identifier
+                    items_status = 0
+                    
+                    break
+                else:
+                    items_status = 1
+                
+            if items_status == 1:
+                return 'Could not find the passed item'
+            else:
+                return DataSet.ORDERS
+
+
 #=========================End Of Administrators Transactions==================================

@@ -10,6 +10,9 @@ post_order = api.model('Posting Order',{'name':fields.String('Name of the item')
 'quantity' : fields.Integer('Total count of items'),'price': fields.Integer('Selling price'),'vendor':fields.String('Name of Vendor'),
 'location':fields.String('Where located'),'image':fields.String('Your image url'),'identifier':fields.String('The items key')})
 
+put_prop = api.model('Editing an entry', {'name':fields.String('Name of the item'),'Description' : fields.String('Brief description of the item'),
+'quantity' : fields.Integer('Total count of items'),'price': fields.Integer('Selling price'),'vendor':fields.String('Name of Vendor'),
+'location':fields.String('Where located'),'image':fields.String('Your image url'),'identifier':fields.String('The items key')})
 #For all Orders
 class All(Resource):
     def get(self):
@@ -41,8 +44,23 @@ class Specific(Resource):
         result = DataSet.get_specific_entry(self, num)
         return {'data':result}
 
+    @api.expect(put_prop)
     def put(self,num):
-        return '<h3>Update specific entry number {} </h3>'.format(num) 
+        '''Use the unique id to edit an items details'''
+        update_data = api.payload
+
+        item_id = num
+        name = update_data['name']
+        description = update_data['Description']
+        quantity = update_data['quantity']
+        price = update_data['price']
+        vendor = update_data['vendor']
+        location = update_data['location']
+        image = update_data['image']
+        identifier = update_data['identifier']
+
+        result = DataSet.update_entry(self,item_id,name,description,quantity,price,vendor,location,image,identifier)
+        return {'data':result} 
 
     def delete(self,num):
         return '<h3>Delete specific entry number {} </h3>'.format(num)

@@ -13,7 +13,7 @@ script:
 # scripts to run
   - coverage erase
   - coverage run server/app/test && coverage html
-  - py.test --cov test
+  - py.test --cov-report term-missing --cov app -v
 
 
 after_success:

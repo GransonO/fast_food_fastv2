@@ -12,6 +12,7 @@ install:
 script:
 # scripts to run
   - coverage run --source=app/test -m pytest -v
+  - ls -l
   - coverage report
 
 

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/GransonO/fast_food_fastv2.svg?branch=develop)](https://travis-ci.com/GransonO/fast_food_fastv2)  [![Maintainability](https://api.codeclimate.com/v1/badges/d35f8fc314106e01aac7/maintainability)](https://codeclimate.com/github/GransonO/fast_food_fastv2/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/d35f8fc314106e01aac7/test_coverage)](https://codeclimate.com/github/GransonO/fast_food_fastv2/test_coverage)
+
 # (Reworked)
 # fast_food_fast V2
 A food delivery web application aimed at testing my understanding of HTML, CSS and Javascript... Languages necessary fro the web development challenges

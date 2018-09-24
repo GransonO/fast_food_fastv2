@@ -13,6 +13,7 @@ script:
 # scripts to run
   - coverage run --source=app/test -m pytest -v
   - cd server
+  - ls -l
   - coverage report
 
 

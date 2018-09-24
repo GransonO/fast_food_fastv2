@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/GransonO/fast_food_fastv2.svg?branch=develop)](https://travis-ci.com/GransonO/fast_food_fastv2)  [![Maintainability](https://api.codeclimate.com/v1/badges/d35f8fc314106e01aac7/maintainability)](https://codeclimate.com/github/GransonO/fast_food_fastv2/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/d35f8fc314106e01aac7/test_coverage)](https://codeclimate.com/github/GransonO/fast_food_fastv2/test_coverage)
+[![Build Status](https://travis-ci.com/GransonO/fast_food_fastv2.svg?branch=develop)](https://travis-ci.com/GransonO/fast_food_fastv2)  [![Maintainability](https://api.codeclimate.com/v1/badges/d35f8fc314106e01aac7/maintainability)](https://codeclimate.com/github/GransonO/fast_food_fastv2/maintainability)  [![Test Coverage](https://api.codeclimate.com/v1/badges/d35f8fc314106e01aac7/test_coverage)](https://codeclimate.com/github/GransonO/fast_food_fastv2/test_coverage)[![Coverage Status](https://coveralls.io/repos/github/GransonO/fast_food_fastv2/badge.svg?branch=develop)](https://coveralls.io/github/GransonO/fast_food_fastv2?branch=develop)
 
 # (Reworked)
 # fast_food_fast V2

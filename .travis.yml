@@ -12,8 +12,8 @@ install:
 script:
 # scripts to run
   - coverage erase
-  - coverage run server/app/test && coverage html
-  - py.test --cov-report term-missing --cov test -v
+  - coverage run --source=app/test -m pytest -v
+  - coverage report
 
 
 after_success:

@@ -11,11 +11,9 @@ install:
 
 script:
 # scripts to run
-  - coverage run --source=app/test -m pytest -v
-  - cd server/app
+  - coverage run --source=server/app/test -m pytest -v
   - ls -l
   - coverage report
-
 
 after_success:
   - codecov

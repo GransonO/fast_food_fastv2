@@ -57,6 +57,4 @@ class DataSet():
             result = DataSet.add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier)
             return result
 
-        
-
 #=========================End Of Administrators Transactions==================================

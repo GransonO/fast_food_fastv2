@@ -79,9 +79,17 @@ class DataSet():
 
     def delete_item(self,item_id,num):
         '''Deletes an item from the admins list'''
+        status = 0
         for item in DataSet.ORDERS:
             if item['id'] == num:
                 DataSet.ORDERS.remove(item)  
+                status = DataSet.ORDERS
+                break
+            else:
+                status = 0
+        if(status == 0):
+            return 'The selected item could not be found'
+        else:
+            return DataSet.ORDERS    
 
-        return DataSet.ORDERS           
 #=========================End Of Administrators Transactions==================================

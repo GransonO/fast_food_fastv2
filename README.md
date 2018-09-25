@@ -69,4 +69,4 @@ While the server is running, tests can be performed from the implemented swagger
 - [Flask Restplus](https://flask-restplus.readthedocs.io/en/stable/)
 
 ## License
-This is an Andela Project created ny Me!
+This is an Andela Project created my Me!

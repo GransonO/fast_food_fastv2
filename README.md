@@ -14,4 +14,7 @@ This is the first of a four part series of tests aimed at gauging the level of u
 ### Accept and decline orders.
 ### Mark orders as completed.
 ### A user should be able to see a history of ordered food.
+
 No usage of web frameworks in the project. All ideas born from the root.
+
+The ui folder contains all hmtl templates and server contains the flask implementation files 

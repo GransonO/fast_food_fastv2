@@ -5,3 +5,4 @@ __pycache__/
 my_tests.py
 .idea/
 htmlcov/
+.coverage

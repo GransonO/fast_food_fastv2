@@ -1,0 +1,22 @@
+language: python
+
+python:
+  - "3.6"
+
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+  - pip install codecov 
+  - pip install coveralls
+  - pip install pytest-cov
+
+script:
+# scripts to run
+  - coverage run --source=server/app/test -m pytest -v
+  - ls -l
+  - coverage report
+
+after_success:
+  - codecov
+  - coveralls
+  

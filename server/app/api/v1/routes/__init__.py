@@ -21,17 +21,28 @@ class All(Resource):
     def post(self):
         '''Adds a new item to the items list'''
         sent_data = api.payload
-        name = sent_data['name']
-        description = sent_data['Description']
-        quantity = sent_data['quantity']
-        price = sent_data['price']
-        vendor = sent_data['vendor']
-        location = sent_data['location']
-        image = sent_data['image']
-        identifier = sent_data['identifier']
+        try:
+            if(sent_data == {}):
+                return {'data': 'You cant send an empty request'}
+            else:
 
-        result = DataSet.add_new_entry(self,name,description,quantity,price,vendor,location,image,identifier)
-        return {'data': result}
+                name = sent_data['name']
+                description = sent_data['Description']
+                quantity = sent_data['quantity']
+                price = sent_data['price']
+                vendor = sent_data['vendor']
+                location  = sent_data['location']
+                image = sent_data['image']
+                identifier = sent_data['identifier']
+
+                result = DataSet.add_new_entry(self,name,description,quantity,price,vendor,location,image,identifier)
+                return {'data': result}    
+
+        except KeyError:
+            return {'data':'Please enter the data as specified'}
+
+        except:
+            return {'data':'Your data could not be posted, are you trying something clever?'}
         
 
 #For Specific

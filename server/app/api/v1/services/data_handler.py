@@ -15,9 +15,9 @@ class DataSet():
         else:
             return DataSet.ORDERS
 
-    #Add new order
-    def add_new_entry(self,name,Description,quantity,price,vendor,location,image,identifier):
-        '''Add new item to list'''
+        #Adds a new item to the list
+    def add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier): 
+        '''Adds items to list'''
         item_id = len(DataSet.ORDERS) + 1
         item = {
             'id' : item_id,
@@ -32,6 +32,33 @@ class DataSet():
         }
         DataSet.ORDERS.append(item)
         return DataSet.ORDERS
+
+    def add_new_entry(self,name,Description,quantity,price,vendor,location,image,identifier):
+        '''Pre-adding new entry processing'''
+        item_status = 0
+        if len(DataSet.ORDERS) > 0:
+
+            for item in DataSet.ORDERS:
+                if item['name'] == name:
+                    item_status = 'Dear human, this item already exists'                    
+                    break
+
+                else:
+                    item_status = 1
+
+            if item_status == 1:
+                '''Item does not exist'''
+                result = DataSet.add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier)
+                return result
+                
+            else:
+                return item_status
+
+
+        else:
+            '''No item in list'''
+            result = DataSet.add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier)
+            return result
 
     #Get specific order
     def get_specific_entry(self,num):

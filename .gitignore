@@ -1,0 +1,8 @@
+.pytest_cache/
+*.pyc
+ff-env/
+__pycache__/
+my_tests.py
+.idea/
+htmlcov/
+.coverage

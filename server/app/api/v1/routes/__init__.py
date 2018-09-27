@@ -49,7 +49,7 @@ class All(Resource):
             return {'data':'Please enter the data as specified'}
 
         except:
-            return {'data':'Your data could not be posted, are you trying something clever?'}        
+            return {'data':'Your data could not be posted, are you trying something clever?'}
 
 #For Specific
 class Specific(Resource):
@@ -87,7 +87,6 @@ class Specific(Resource):
             'delete_state': 'Successful',
             'available_data' : result
         }}
-
 
 #For All Users
 class AllUsers(Resource):

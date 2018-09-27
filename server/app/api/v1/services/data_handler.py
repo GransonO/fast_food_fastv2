@@ -3,14 +3,15 @@ class DataSet():
     ORDERS = []
 
 #=========================Handles Administrators Transactions==================================
- 
+
+    #Get all orders
     def get_all_orders(self):
         '''Return all orders to the request'''
         if len(DataSet.ORDERS) < 1:
             return 'No Items present'
         else:
             return DataSet.ORDERS
-          
+
     #Adds a new item to the list
     def add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier): 
         '''Adds items to list'''
@@ -26,6 +27,7 @@ class DataSet():
             'image' : image,
             'identifier' : identifier
         }
+
         DataSet.ORDERS.append(item)
         return DataSet.ORDERS
 
@@ -54,6 +56,21 @@ class DataSet():
         else:
             '''No item in list'''
             result = DataSet.add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier)
+            return result
+
+    #Get specific order
+    def get_specific_entry(self,num):
+        '''Gets a specific order as requested'''
+        if len(DataSet.ORDERS) < 1:
+            return 'There are no items yet'
+            
+        else:
+            result = 'The selected item does not exist'
+
+            for each in DataSet.ORDERS:
+                if each['id'] == num:
+                    result = each
+
             return result
 
 #=========================End Of Administrators Transactions==================================

@@ -53,5 +53,5 @@ class DatabaseBase():
     def order_of_creation(self):
         DatabaseBase.create_db(self)
         DatabaseBase.create_schema(self)
-        DatabaseBase.create_tables(self)
+        DatabaseBase.create_tables(self)      
        

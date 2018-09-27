@@ -1,4 +1,4 @@
-from flask import Flask,Blueprint
+from flask import Flask
 from flask_restplus import Resource,Api,fields
 from app import create_app      #Used . to import from a top level package
 from ..services.data_handler import DataSet  #package for data manipulations
@@ -6,6 +6,7 @@ from ..services.data_handler import DataSet  #package for data manipulations
 app = create_app('Developing')
 
 api = Api(app)
+
 post_order = api.model('Posting Order',{'name':fields.String('Name of the item'),'Description' : fields.String('Brief description of the item'),
 'quantity' : fields.Integer('Total count of items'),'price': fields.Integer('Selling price'),'vendor':fields.String('Name of Vendor'),
 'location':fields.String('Where located'),'image':fields.String('Your image url'),'identifier':fields.String('The items key')})
@@ -51,6 +52,7 @@ class Specific(Resource):
         '''Gets a specific order as requested'''
         result = DataSet.get_specific_entry(self, num)
         return {'data':result}
+
 
     def put(self,num):
         return '<h3>Update specific entry number {} </h3>'.format(num) 

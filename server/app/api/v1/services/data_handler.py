@@ -3,6 +3,7 @@ class DataSet():
     ORDERS = []
 
 #=========================Handles Administrators Transactions==================================
+
     #Get all orders
     def get_all_orders(self):
         '''Return all orders to the request'''
@@ -26,7 +27,7 @@ class DataSet():
             'image' : image,
             'identifier' : identifier
         }
-        
+
         DataSet.ORDERS.append(item)
         return DataSet.ORDERS
 

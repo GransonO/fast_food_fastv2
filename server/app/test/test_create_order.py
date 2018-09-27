@@ -18,4 +18,4 @@ def test_post(create_test_app):
     assert b"Coke" in response.data
     assert b"Cocacola" in response.data
     assert b"www.this_is_my_image.com/img.png" in response.data
-    
+        

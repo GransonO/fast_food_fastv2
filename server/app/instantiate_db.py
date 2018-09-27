@@ -3,9 +3,9 @@ import psycopg2
 class DatabaseBase():
 
     items_tables = "CREATE TABLE administrator.items ( id SERIAL PRIMARY KEY, item_name TEXT, details CHAR(100), price REAL, image_url CHAR(200), item_id CHAR(50))"
-    vendors_table = "CREATE TABLE administrator.registrations ( id SERIAL PRIMARY KEY, vendor_name TEXT, details CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), vendor_id CHAR(50), reg_date TIMESTAMP)"
+    vendors_table = "CREATE TABLE administrator.registrations ( id SERIAL PRIMARY KEY, user_name TEXT, vendor_name TEXT, details CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), vendor_id CHAR(50), reg_date TIMESTAMP)"
     orders_table = "CREATE TABLE orders_tbl ( id SERIAL PRIMARY KEY, order_date TIMESTAMP,  order_id CHAR(50), order_detail CHAR(200), order_amount REAL, order_from CHAR(50), order_to CHAR(50), order_status CHAR(50),status_changed TIMESTAMP)"
-    customer_tables = "CREATE TABLE customer.registration( id SERIAL PRIMARY KEY, customer_name TEXT, about CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), vendor_id CHAR(50), reg_date TIMESTAMP)"
+    customer_tables = "CREATE TABLE customer.registration( id SERIAL PRIMARY KEY, customer_name TEXT, about CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), customer_id CHAR(50), reg_date TIMESTAMP)"
 
     database_tables = [items_tables,vendors_table,orders_table,customer_tables]
 

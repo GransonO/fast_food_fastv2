@@ -7,7 +7,8 @@ class DataSet():
     USER_ORDERS = []
 
 #=========================Handles Administrators Transactions==================================
-    #Get all orders
+
+#Get all orders
     def get_all_orders(self):
         '''Return all orders to the request'''
         if len(DataSet.ORDERS) < 1:
@@ -54,7 +55,6 @@ class DataSet():
             else:
                 return item_status
 
-
         else:
             '''No item in list'''
             result = DataSet.add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier)
@@ -94,7 +94,6 @@ class DataSet():
                     items['image'] = image
                     items['identifier'] = identifier
                     items_status = 0
-
                     break
                 else:
                     items_status = 1
@@ -106,9 +105,17 @@ class DataSet():
 
     def delete_item(self,item_id,num):
         '''Deletes an item from the admins list'''
+        status = 0
         for item in DataSet.ORDERS:
             if item['id'] == num:
                 DataSet.ORDERS.remove(item)  
+                status = DataSet.ORDERS
+                break
+            else:
+                status = 0
+        if(status == 0):
+            return 'The selected item could not be found'
+        else:
+            return DataSet.ORDERS    
 
-        return DataSet.ORDERS           
 #=========================End Of Administrators Transactions==================================

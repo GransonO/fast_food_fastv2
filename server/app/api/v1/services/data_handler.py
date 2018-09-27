@@ -1,6 +1,10 @@
 class DataSet():
 
+    ADMIN = []
     ORDERS = []
+
+    USERS = []
+    USER_ORDERS = []
 
 #=========================Handles Administrators Transactions==================================
 
@@ -11,6 +15,7 @@ class DataSet():
             return 'No Items present'
         else:
             return DataSet.ORDERS
+
 
     #Adds a new item to the list
     def add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier): 
@@ -27,7 +32,6 @@ class DataSet():
             'image' : image,
             'identifier' : identifier
         }
-
         DataSet.ORDERS.append(item)
         return DataSet.ORDERS
 
@@ -51,7 +55,6 @@ class DataSet():
                 
             else:
                 return item_status
-
         else:
             '''No item in list'''
             result = DataSet.add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier)
@@ -91,7 +94,6 @@ class DataSet():
                     items['image'] = image
                     items['identifier'] = identifier
                     items_status = 0
-                    
                     break
                 else:
                     items_status = 1
@@ -100,5 +102,20 @@ class DataSet():
                 return 'Could not find the passed item'
             else:
                 return DataSet.ORDERS
+
+    def delete_item(self,item_id,num):
+        '''Deletes an item from the admins list'''
+        status = 0
+        for item in DataSet.ORDERS:
+            if item['id'] == num:
+                DataSet.ORDERS.remove(item)  
+                status = DataSet.ORDERS
+                break
+            else:
+                status = 0
+        if(status == 0):
+            return 'The selected item could not be found'
+        else:
+            return DataSet.ORDERS    
 
 #=========================End Of Administrators Transactions==================================

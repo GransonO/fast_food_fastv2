@@ -1,4 +1,4 @@
-import psycopg2
+from .db_init import base_creation
 
 class DatabaseBase():
 
@@ -8,27 +8,17 @@ class DatabaseBase():
     customer_tables = "CREATE TABLE customer.registration( id SERIAL PRIMARY KEY, customer_name TEXT, about CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), vendor_id CHAR(50), reg_date TIMESTAMP)"
 
     database_tables = [items_tables,vendors_table,orders_table,customer_tables]
-
-    #Connects to the DB
-    def base_creation(self,db_name):
-        try:
-            conn = psycopg2.connect("dbname={} user=postgres password=Power host=localhost".format(db_name))
-            conn.autocommit=True #with this there's no need to call commit after execute
-            cur = conn.cursor()
-            return cur 
-        except:
-            return 'Could not connect to db'   
-
+ 
     def create_db(self):
         '''Creates a db in start'''
-        cur = DatabaseBase.base_creation(self,'postgres')
+        cur = base_creation(self,'postgres')
         cur.execute("CREATE DATABASE fast_food_db")
         cur.close()
 
     #Create table schema
     def create_schema(self):
         '''Creates a db'''
-        cur = DatabaseBase.base_creation(self,'fast_food_db')
+        cur = base_creation(self,'fast_food_db')
         cur.execute("CREATE SCHEMA administrator")
         cur.execute("CREATE SCHEMA customer")
 
@@ -37,7 +27,7 @@ class DatabaseBase():
     #Create the necessary tables
     def create_tables(self):
         '''Creates all db tables'''
-        cur = DatabaseBase.base_creation(self,'fast_food_db')
+        cur = base_creation(self,'fast_food_db')
         for table in DatabaseBase.database_tables:
             cur.execute(table)
 
@@ -46,7 +36,7 @@ class DatabaseBase():
     #Cleans memory after use   
     def clean_up(self):
         '''Memory clean up'''
-        cur = DatabaseBase.base_creation(self,'fast_food_db')
+        cur = base_creation(self,'fast_food_db')
         cur.close()
 
     #Calls each build function in order

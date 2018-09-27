@@ -9,4 +9,3 @@ class ServiceSpace():
     #Get logged in users details
     def retrieve_user(self,type,name,password):
         return 'Data'
-

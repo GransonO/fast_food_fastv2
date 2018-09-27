@@ -7,6 +7,7 @@ class DataSet():
     USER_ORDERS = []
 
 #=========================Handles Administrators Transactions==================================
+
     #Get all orders
     def get_all_orders(self):
         '''Return all orders to the request'''
@@ -15,7 +16,8 @@ class DataSet():
         else:
             return DataSet.ORDERS
 
-        #Adds a new item to the list
+
+    #Adds a new item to the list
     def add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier): 
         '''Adds items to list'''
         item_id = len(DataSet.ORDERS) + 1
@@ -53,8 +55,6 @@ class DataSet():
                 
             else:
                 return item_status
-
-
         else:
             '''No item in list'''
             result = DataSet.add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier)
@@ -94,7 +94,6 @@ class DataSet():
                     items['image'] = image
                     items['identifier'] = identifier
                     items_status = 0
-
                     break
                 else:
                     items_status = 1

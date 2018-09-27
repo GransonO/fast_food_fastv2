@@ -180,4 +180,3 @@ def test_delete_item(num = 1):
 assert test_delete_item(1) == []
 assert len(test_delete_item(1)) == 0
 assert len(test_delete_item(1)) != 1 
- 

@@ -10,8 +10,7 @@ class DataSet():
             return 'No Items present'
         else:
             return DataSet.ORDERS
-
-
+          
     #Adds a new item to the list
     def add_to_list(self,name,Description,quantity,price,vendor,location,image,identifier): 
         '''Adds items to list'''

@@ -13,4 +13,3 @@ def test_get_all(create_test_app):
     assert b"www.this_is_my_image.com/img.png" in response.data
     assert b"drinks110" in response.data
     assert b"drinks115" in response.data
-    

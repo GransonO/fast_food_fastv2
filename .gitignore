@@ -7,3 +7,4 @@ my_tests.py
 htmlcov/
 .coverage
 secret.py
+jwt_testing.py

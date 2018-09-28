@@ -2,13 +2,10 @@ from flask import Flask
 from flask_restplus import Resource,Api,fields
 import datetime
 from functools import wraps
-
+import jwt
 from app import create_app
 from ..services.db_handler import ServiceSpace
 from app.secret import all_secrets 
-
-#import jwt 
-
 
 app = create_app('Developing')
 app.config['SECRET_KEY'] = all_secrets['jwt-key']
@@ -37,14 +34,14 @@ class Auth_Login(Resource):
                 name = sent_data['name']
                 password = sent_data['password']
 
-                result = ServiceSpace.retrieve_user(self,type,name,password)
-                return {'token':'This will be the token', 'user-id': result}
+                result = ServiceSpace.retrieve_user(self,type,name,password)                
+                encoded = jwt.encode({'gen-token': result}, app.config['SECRET_KEY'], algorithm='HS256')
+
+                return {'token':encoded, 'user-id': result}
 
         except KeyError:
             return {'data':'Please enter the data as specified'}
 
-        except:
-            return {'data':'Your data could not be posted, are you trying something clever?'}
 
 #Authentication sign up
 class Auth_Sign_Up(Resource):

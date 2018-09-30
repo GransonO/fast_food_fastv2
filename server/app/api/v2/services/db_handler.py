@@ -103,9 +103,79 @@ class ServiceSpace():
         entry_count = total_reg_count + 1
         order_date = datetime.datetime.now()
         order_id = random.randint(100,1000000)
-        order_status = 'PLACED' # PLACED, ACCEPTED(ADMIN),RUNNING(AUTO), COMPLETED(ADMIN), REJECTED(ADMIN)
+        order_status = 'NEW' # PROCESSING(AUTO), COMPLETED(ADMIN), CANCELLED(ADMIN)
         status_changed = datetime.datetime.now()
         query = "INSERT INTO orders_tbl values ({}, '{}',  '{}', '{}', '{}', '{}', '{}', '{}','{}')  RETURNING id".format(entry_count,order_date,order_id,order_detail,order_amount,order_from,order_to,order_status,status_changed)  
         cur.execute(query)
         result = cur.fetchone()[0]
         return result
+
+    #Query all orders from all customers
+    def get_all_admin_orders(self,admin_id):
+
+        cur = base_creation(self,'fast_food_db')
+        query = "SELECT * FROM orders_tbl WHERE order_to = '{}'".format(admin_id)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        orders_list = []
+        if row_count < 1:
+            return 'You have not ordered anything yet! '
+        else:
+            print(results)
+            for result in results:
+                item = {
+                        'order_date' : str(result[1]),
+                        'order_id' : result[2],
+                        'order_detail' : result[3],
+                        'order_amount' : result[4],
+                        'order_from' : result[5],
+                        'order_to' : result[6],
+                        'order_status' : result[7],
+                        'status_changed' : str(result[8])
+                    }
+                orders_list.append(item)
+            return {'orders_list': orders_list} 
+
+    #Query specific order from orders table
+    def get_specific_order(self,order_id):
+
+        cur = base_creation(self,'fast_food_db')
+        query = "SELECT * FROM orders_tbl WHERE order_id = '{}'".format(order_id)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        orders_list = []
+        if row_count < 1:
+            return 'Nothing here with that ID, Bro!'
+        else:
+            print(results)
+            for result in results:
+                item = {
+                        'order_date' : str(result[1]),
+                        'order_id' : result[2],
+                        'order_detail' : result[3],
+                        'order_amount' : result[4],
+                        'order_from' : result[5],
+                        'order_to' : result[6],
+                        'order_status' : result[7],
+                        'status_changed' : str(result[8])
+                    }
+                orders_list.append(item)
+            return {'specific_list': orders_list} 
+
+    #Update the status of an order by its ID
+    def update_an_item(self,status,order_id):
+    
+        cur = base_creation(self,'fast_food_db')
+        status_changed = datetime.datetime.now()
+        query = "UPDATE orders_tbl set order_status = '{}' ,status_changed = '{}' where order_id = '{}'".format(status,status_changed,order_id)  
+        cur.execute(query)
+        #retrieve updated order
+        try:
+            cur.execute(query)
+            #retrieve updated order
+            result = ServiceSpace.get_specific_order(self,order_id)
+            return {'response':'Updated State','details': result}
+        except:
+            return 'Whoops! Aye! Something terribly wrong happened!!!'

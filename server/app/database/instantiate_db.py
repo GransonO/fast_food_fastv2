@@ -3,10 +3,10 @@ from db_init import base_creation
 
 class DatabaseBase():
 
-    items_tables = "CREATE TABLE administrator_items ( id SERIAL PRIMARY KEY, item_name TEXT, details CHAR(100), price REAL, image_url CHAR(200), item_id CHAR(50), vendor_id CHAR(50))"
-    vendors_table = "CREATE TABLE administrator_registrations ( id SERIAL PRIMARY KEY, username TEXT, vendor_name TEXT, details CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), vendor_id CHAR(200), adm_password CHAR(200), reg_date TIMESTAMP, reg_state CHAR(20))"
-    orders_table = "CREATE TABLE orders_tbl ( id SERIAL PRIMARY KEY, order_date TIMESTAMP,  order_id CHAR(50), order_detail CHAR(200), order_amount REAL, order_from CHAR(50), order_to CHAR(50), order_status CHAR(50),status_changed TIMESTAMP)"
-    customer_tables = "CREATE TABLE customer_registration( id SERIAL PRIMARY KEY, customer_name TEXT, about CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), customer_id CHAR(200), cus_password CHAR(200), reg_date TIMESTAMP,reg_state CHAR(20))"
+    items_tables = "CREATE TABLE administrator_items ( id SERIAL PRIMARY KEY, item_name TEXT, details TEXT, price REAL, image_url TEXT, item_id TEXT, vendor_id TEXT)"
+    vendors_table = "CREATE TABLE administrator_registrations ( id SERIAL PRIMARY KEY, username TEXT, vendor_name TEXT, details TEXT, location TEXT, image_url TEXT, phone_no TEXT, email TEXT, vendor_id TEXT, adm_password TEXT, reg_date TIMESTAMP, reg_state TEXT)"
+    orders_table = "CREATE TABLE orders_tbl ( id SERIAL PRIMARY KEY, order_date TIMESTAMP,  order_id TEXT, order_detail TEXT, order_amount REAL, order_from TEXT, order_to TEXT, order_status TEXT,status_changed TIMESTAMP)"
+    customer_tables = "CREATE TABLE customer_registration( id SERIAL PRIMARY KEY, customer_name TEXT, about TEXT, location TEXT, image_url TEXT, phone_no TEXT, email TEXT, customer_id TEXT, cus_password TEXT, reg_date TIMESTAMP,reg_state TEXT)"
 
     database_tables = [items_tables,vendors_table,orders_table,customer_tables]
  

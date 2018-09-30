@@ -5,10 +5,10 @@ from functools import wraps
 import jwt
 from app import create_app
 from ..services.db_handler import ServiceSpace
-from app.secret import all_secrets 
+from app.secret import secrets 
 
 app = create_app('Developing')
-app.config['SECRET_KEY'] = all_secrets['jwt-key']
+app.config['SECRET_KEY'] = secrets['jwt-key']
 api = Api(app)
 
 auth_login_ = api.model('User Login',{'type': fields.String('The user can be either ADMIN or CUSTOMER'),'name': fields.String('The username registered'),'password': fields.String('The users password')})
@@ -69,132 +69,3 @@ class Auth_Sign_Up(Resource):
 
         except KeyError:
             return {'data':'Please enter the data as specified'}
-
-
-#Users data Interactions
-class UsersOrders(Resource):
-    
-    @api.expect(order_history)
-    def get(self):
-        ''' Users get the order history for a particular user'''
-        #Customer ID passed from the payload in headers after login
-        sent_data = api.payload
-        customer_id = sent_data['user_id']
-        result = ServiceSpace.get_all_orders(self,customer_id)
-        return {'data':result}
-
-    @api.expect(order_request)
-    def post(self):
-        '''Users place an order for food'''
-        sent_data = api.payload
-        try:
-            if(sent_data == {}):
-                return {'data': 'You cant send an empty request'}
-            else:
-                order_detail = sent_data['order_detail']
-                order_amount = sent_data['order_amount']
-                order_from = sent_data['order_from']
-                order_to = sent_data['order_to']
-                order_status  = sent_data['order_status']
-                result = ServiceSpace.add_order_to_db(self,order_detail,order_amount,order_from,order_to,order_status)
-                return {'data': result}    
-
-        except KeyError:
-            return {'data':'Please enter the data as specified'}
-
-
-#Admin Actions
-class AdminAllOrders(Resource):
-    ''' Admin get all orders placed (Admin Only)'''
-    def get(self):
-        sent_data = api.payload
-        admin_id = sent_data['user_id']
-        result = ServiceSpace.get_all_admin_orders(self,admin_id)
-        return {'data':result}
-
-
-#Admin Specific Actions
-class AdminSpecificOrders(Resource):
-    
-    #@api.expect(item_details)
-    def post(self,num):
-        '''Add item to item table ( By Admin Only)'''
-        sent_data = api.payload
-        try:
-            if(sent_data == {}):
-                return {'data': 'You cant send an empty request'}
-            else:
-                order_detail = sent_data['order_detail']
-                order_amount = sent_data['order_amount']
-                order_from = sent_data['order_from']
-                order_to = sent_data['order_to']
-                order_status  = sent_data['order_status']
-                result = ServiceSpace.add_order_to_db(self,order_detail,order_amount,order_from,order_to,order_status)
-                return {'data': result}    
-
-        except KeyError:
-            return {'data':'Please enter the data as specified'}
-        
-    #@api.expect(put_item_details)
-    def put(self,num):
-        '''Update the status of an order (Admin Only)'''
-        sent_data = api.payload
-        try:
-            if(sent_data == {}):
-                return {'data': 'You cant post an empty request'}
-            else:
-                id = sent_data['id']
-                item_name = sent_data['item_name']
-                details = sent_data['details']
-                price = sent_data['price']
-                image_url  = sent_data['image_url']
-                item_id  = sent_data['item_id']
-                result = ServiceSpace.update_an_item(self,id,item_name,details,price,image_url,item_id)
-                return {'data': result}    
-
-        except KeyError:
-            return {'data':'Please enter the data as specified'}
-
-#Menu Requesting
-class RequestMenu(Resource):
-    def get(self):
-        '''Preview items of a specific restaurant'''
-        sent_data = api.payload
-        user_id = sent_data['user_id']
-        vendor_name = sent_data['vendor_name']        
-        result = ServiceSpace.get_all_vendor_items(self,vendor_name)
-        return {'data':result}
-    
-    def post(self):
-        '''Add a meal option to the menu (Admin)'''
-        sent_data = api.payload
-        try:
-            if(sent_data == {}):
-                return {'data': 'You cant post an empty request'}
-            else:
-                id = sent_data['id']
-                item_name = sent_data['item_name']
-                details = sent_data['details']
-                price = sent_data['price']
-                image_url  = sent_data['image_url']
-                item_id  = sent_data['item_id']
-                result = ServiceSpace.update_an_item(self,id,item_name,details,price,image_url,item_id)
-                return {'data': result}    
-
-        except KeyError:
-            return {'data':'Please enter the data as specified'}
-
-
-#Authentication
-api.add_resource(Auth_Sign_Up,'/auth/signup')
-api.add_resource(Auth_Login,'/auth/login')
-
-#Users actions
-api.add_resource(UsersOrders,'/users/orders')
-
-#Administrators
-api.add_resource(AdminAllOrders,'/orders/ ')
-api.add_resource(AdminSpecificOrders,'/orders/<int:num> ')
-
-#Menu 
-api.add_resource(RequestMenu,'/menu ')

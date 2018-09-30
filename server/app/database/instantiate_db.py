@@ -1,4 +1,5 @@
-from .db_init import base_creation 
+#Create database and respective tables
+from db_init import base_creation 
 
 class DatabaseBase():
 
@@ -32,5 +33,9 @@ class DatabaseBase():
 
     #Calls each build function in order
     def order_of_creation(self):
-        DatabaseBase.create_db(self)
-        DatabaseBase.create_tables(self)      
+        try:
+            DatabaseBase.create_db(self)
+            DatabaseBase.create_tables(self)  
+            return 'Creation Success'
+        except:   
+            return 'Error Occurred' 

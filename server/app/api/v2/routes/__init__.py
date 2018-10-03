@@ -29,9 +29,9 @@ api = Api(app, authorizations=authorize_properties)
 
 auth_login_ = api.model('User Login',{'type': fields.String('The user can be either ADMIN or CUSTOMER'),'name': fields.String('The username registered'),'password': fields.String('The users password')})
 auth_sign_up = api.model('User Sign Up',{'type': fields.String('The user can be either "ADMIN" or "CUSTOMER"'),'name': fields.String('The username registered'),'vendor_name': fields.String('The if user is Admin'),'password': fields.String('The users password'),'about': fields.String('Brief Users description'),'location': fields.String('The users location'),'image_url': fields.String('The users uploaded image'),'phone_no': fields.String('The users phone number'),'email': fields.String('The users email')})
-order_request = api.model('User Order request', { 'order_to': fields.String('The vendor of the item'), 'order_amount': fields.String('The total transaction amount') , 'order_detail': fields.String('Brief description of the order') })
+order_request = api.model('User Order request', { 'order_to': fields.String('The vendor of the item'), 'order_amount': fields.Float('The total transaction amount') , 'order_detail': fields.String('Brief description of the order') })
 put_item_details = api.model('Admin updating request', {'status': fields.String('Order status. Can be either NEW(CUSTOMER), PROCESSING(AUTO), COMPLETED(ADMIN), CANCELLED(ADMIN)') })
-new_item_details = api.model('New Item Posting', { 'item_name': fields.String('Name of item'), 'details': fields.String('Brief description of item'),'price' : fields.String('Price of the item'), 'image_url':fields.String('Url to hosted item\'s image')})
+new_item_details = api.model('New Item Posting', { 'item_name': fields.String('Name of item'), 'details': fields.String('Brief description of item'),'price' : fields.Float('Price of the item'), 'image_url':fields.String('Url to hosted item\'s image')})
 
 #Authentication for all users decorator
 def authorize_user(func):

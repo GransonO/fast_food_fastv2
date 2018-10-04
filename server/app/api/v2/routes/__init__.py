@@ -139,13 +139,13 @@ class Auth_Sign_Up(Resource):
                 mail_valid = Validation.email_Validation(self,email)
                 pass_valid = Validation.password_Validation(self,password)
                 if mail_valid == None:
-                    return {'response': 'Email does not conform to standards( yyy@xxx.(com or co.ke))'} 
+                    return {'response': 'Email does not conform to standards( yyy@xxx.(com or co.ke))'}, 400
                 
                 if pass_valid != 'Pass':
-                    return {'response': pass_valid}
+                    return {'response': pass_valid}, 400
 
                 if type not in allowed:
-                    return {'response' : 'Sorry {}, the type value passed cannot be processed'.format(name)}, 405
+                    return {'response' : 'Sorry {}, the type value passed cannot be processed'.format(name)}, 400
 
                 else:
 
@@ -265,7 +265,6 @@ class RequestMenu(Resource):
 
         except KeyError:
             return {'data':'Please enter the data as specified'}, 400
-
 
 #Authentication
 api.add_resource(Auth_Sign_Up,'/auth/signup')

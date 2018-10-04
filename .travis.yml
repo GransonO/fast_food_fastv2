@@ -10,6 +10,17 @@ install:
   - pip install coveralls
   - pip install pytest-cov
 
+addons:
+  postgresql: "9.6"
+
+#Starting postgres
+services:
+  - postgresql
+
+before-scripts:
+  - psql -c 'create database fast_food_db;' -U postgres
+  - psql -c 'create database test_fast_food_db;' -U postgres
+
 script:
 # scripts to run
   - coverage run --source=server/app/test -m pytest -v

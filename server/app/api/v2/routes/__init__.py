@@ -47,7 +47,7 @@ def authorize_user(func):
             except:
                 return {'Token passed is invalid'}
         else:
-            return 'No logged in key passed'
+            return {'error':'No logged in key passed'},401
         return func(*args, **kwargs)    
 
     return decorate_func 
@@ -88,7 +88,7 @@ class Auth_Login(Resource):
 
         try:
             if(sent_data == {}):
-                return {'data': 'You cant send an empty request'}, 204
+                return {'data': 'You cant send an empty request'}, 403
             else:
                 #Implement the JWT Authorization here
                 type = sent_data['type']
@@ -105,7 +105,7 @@ class Auth_Login(Resource):
                         return {'response':'login success','login_token': encoded.decode('UTF-8')}, 202             
 
                     else:
-                        return {'response':'Your username or password may be wrong'}, 404
+                        return {'response':'Your username or password may be wrong'}, 401
                 else:
                     return {'response':'The passed type is not allowed'}, 405
 
@@ -122,7 +122,7 @@ class Auth_Sign_Up(Resource):
         allowed = ['ADMIN','CUSTOMER']
         try:
             if(sent_data == {}):
-                return {'data': 'You cant send an empty request'}, 204
+                return {'data': 'You cant send an empty request'}, 403
             else:
                 type = sent_data['type']
                 name = sent_data['name']

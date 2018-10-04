@@ -23,7 +23,7 @@ class DatabaseBase():
         cur = base_creation(self,'postgres')
         db_name = DatabaseBase.get_db_status(self,db_state)
         print('Creating {}'.format(db_name))
-        cur.execute("CREATE DATABASE IF NOT EXISTS {}".format(db_name))
+        cur.execute("CREATE DATABASE {}".format(db_name))
         cur.close()
 
     #Create the necessary tables

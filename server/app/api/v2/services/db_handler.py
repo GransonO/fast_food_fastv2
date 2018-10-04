@@ -40,6 +40,7 @@ class ServiceSpace():
                     'name' : name,
                     'phone_no' : phone_no,
                     'email' : email,
+                    'vendor_name': vendor_name,
                     'location' : location,
                     'reg_date' : str(reg_date),
                     'image_url' : image_url
@@ -283,9 +284,10 @@ class ServiceSpace():
         query = "INSERT INTO administrator_items VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}')  RETURNING item_id ".format(entry_count, item_name, details, price, image_url, item_id, vendor_id)
         cur.execute(query)
         result = cur.fetchone()[0]
-        if result == item_id:
+        print('result is {} Item is {}'.format(result,item_id))
+        if int(result) == item_id:
             item = {
-                'added_date' : added_date,
+                'added_date' : str(added_date),
                 'details' : details,
                 'item_name' : item_name,
                 'vendor_id' : vendor_id,

@@ -10,7 +10,7 @@ class DatabaseBase():
         if db_state == 'Production': #For production
             db_name = 'fast_food_db'
         else:
-            db_name = 'test_fast_food_db' #For testing
+            db_name = 'd8cv78aggrjnp3' #For testing
         return db_name
 
     
@@ -55,7 +55,7 @@ class DatabaseBase():
 
     #Calls each build function in order
     def order_of_creation(self,db_state):
-        DatabaseBase.drop_db(self,db_state) #Drop DB if exists
-        DatabaseBase.create_db(self,db_state) #Create DB
+        #DatabaseBase.drop_db(self,db_state) #Drop DB if exists
+        #DatabaseBase.create_db(self,db_state) #Create DB
         DatabaseBase.create_tables(self,db_state) #Create tables
         return 'Creation Success for state {}.'.format(db_state)

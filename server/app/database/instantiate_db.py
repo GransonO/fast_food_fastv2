@@ -20,7 +20,7 @@ class DatabaseBase():
 
     def create_db(self,db_state):
         '''Creates a db in start'''
-        cur = base_creation(self,'postgres')
+        cur = base_creation(self,'df4haveo5v04vq')
         db_name = DatabaseBase.get_db_status(self,db_state)
         print('Creating {}'.format(db_name))
         cur.execute("CREATE DATABASE {}".format(db_name))
@@ -48,7 +48,7 @@ class DatabaseBase():
         print('Droping {} database ...'.format(db_state))
         db_name = DatabaseBase.get_db_status(self,db_state)
         if db_state == 'Testing':
-            cur = base_creation(self,'postgres') #Use admin privilege to drop db
+            cur = base_creation(self,'df4haveo5v04vq') #Use admin privilege to drop db
             cur.execute('DROP DATABASE IF EXISTS  {}'.format(db_name))
             cur.close()
 

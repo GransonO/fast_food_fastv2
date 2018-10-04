@@ -6,6 +6,7 @@ import jwt
 from app import create_app
 from ..services.db_handler import ServiceSpace
 from app.secret import secrets 
+from .validators import Validation
 
 app_state = 'Testing'  #'Developing','Testing','Production'
 app = create_app(app_state)
@@ -133,6 +134,15 @@ class Auth_Sign_Up(Resource):
                 about = sent_data['about']
                 location = sent_data['location']
                 image_url = sent_data['image_url']
+
+                
+                mail_valid = Validation.email_Validation(self,email)
+                pass_valid = Validation.password_Validation(self,password)
+                if mail_valid == None:
+                    return {'response': 'Email does not conform to standards( yyy@xxx.(com or co.ke))'} 
+                
+                if pass_valid != 'Pass':
+                    return {'response': pass_valid}
 
                 if type not in allowed:
                     return {'response' : 'Sorry {}, the type value passed cannot be processed'.format(name)}, 405

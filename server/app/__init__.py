@@ -14,9 +14,7 @@ def create_app(Config_Status):
         print('Checking if {} Database Exists ....'.format(Config_Status))
         cur = database.checkDbState(databasename) #Check if connection to passed db
         print('Cursor says : {}!'.format(cur))
-        if(cur == 'Could not connect to db'):
-            print(database.order_of_creation(Config_Status))
-        else:
-            print('Required database set for action')    
+        print(database.order_of_creation(Config_Status))
+        print('Required database set for action')    
 
     return app

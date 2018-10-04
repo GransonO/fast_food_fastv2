@@ -40,7 +40,7 @@ class DatabaseBase():
 
         cur = base_creation(self,db_name)
         for table in tables:
-            print('Script : {}'.table)
+            print('Script : {}'.format(table))
             cur.execute(table)
         cur.close()
 

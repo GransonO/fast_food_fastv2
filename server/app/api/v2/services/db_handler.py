@@ -185,7 +185,7 @@ class ServiceSpace():
         row_count = cur.rowcount
         orders_list = []
         if row_count < 1:
-            return 'You have not ordered anything yet! '
+            return 'Nothing has been ordered yet! '
         else:
             print(results)
             for result in results:

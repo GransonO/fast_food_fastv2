@@ -29,8 +29,8 @@ api = Api(app, authorizations=authorize_properties)
 auth_login_ = api.model('User Login',{'type': fields.String('The user can be either ADMIN or CUSTOMER'),'name': fields.String('The username registered'),'password': fields.String('The users password')})
 auth_sign_up = api.model('User Sign Up',{'type': fields.String('The user can be either "ADMIN" or "CUSTOMER"'),'name': fields.String('The username registered'),'vendor_name': fields.String('The if user is Admin'),'password': fields.String('The users password'),'about': fields.String('Brief Users description'),'location': fields.String('The users location'),'image_url': fields.String('The users uploaded image'),'phone_no': fields.String('The users phone number'),'email': fields.String('The users email')})
 order_request = api.model('User Order request', { 'order_to': fields.String('The vendor of the item'), 'order_amount': fields.String('The total transaction amount') , 'order_detail': fields.String('Brief description of the order') })
-
 put_item_details = api.model('Admin updating request', {'status': fields.String('Order status. Can be either NEW(CUSTOMER), PROCESSING(AUTO), COMPLETED(ADMIN), CANCELLED(ADMIN)') })
+new_item_details = api.model('New Item Posting', { 'item_name': fields.String('Name of item'), 'details': fields.String('Brief description of item'),'price' : fields.String('Price of the item'), 'image_url':fields.String('Url to hosted item\'s image')})
 
 #Authentication for all users decorator
 def authorize_user(func):
@@ -216,6 +216,34 @@ class AdminSpecificOrders(Resource):
         except KeyError:
             return {'data':'Please enter the data as specified'}
 
+#Menu Requesting
+class RequestMenu(Resource):
+    def get(self):
+        '''Preview items of a specific restaurant'''      
+        result = ServiceSpace.get_all_vendor_items(self)
+        return {'data':result}
+
+    @api.expect(new_item_details)
+    @api.doc(security='admin-key')
+    @authorize_admin
+    def post(self):
+        '''Add a meal option to the menu (Admin)'''
+        sent_data = api.payload
+        try:
+            if(sent_data == {}):
+                return {'data': 'You cant post an empty request'}
+            else:
+                logged_in_token = request.headers['ADMIN-KEY']
+                vendor_id = decode_token(logged_in_token)
+                item_name = sent_data['item_name']
+                details = sent_data['details']
+                price = sent_data['price']
+                image_url  = sent_data['image_url']
+                result = ServiceSpace.add_an_item_to_tbl(self,vendor_id,item_name,details,price,image_url)
+                return {'data': result} 
+
+        except KeyError:
+            return {'data':'Please enter the data as specified'}
 
 
 #Authentication
@@ -228,3 +256,6 @@ api.add_resource(UsersOrders,'/users/orders')
 #Administrators
 api.add_resource(AdminAllOrders,'/orders/')
 api.add_resource(AdminSpecificOrders,'/orders/<int:order_id>')
+
+#Menu 
+api.add_resource(RequestMenu,'/menu')

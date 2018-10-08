@@ -19,7 +19,7 @@ class ServiceSpace():
             total_reg_count = total_reg_count + 1
             reg_state = type
             reg_date = datetime.datetime.now()
-            vendor_id = str(uuid.uuid1())     #public ID                       
+            vendor_id = str(uuid.uuid1())    #public ID                       
             adm_password = generate_password_hash(password)   #Hash the password    
             query = "INSERT INTO administrator_registrations  values ( {}, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')  RETURNING id".format(total_reg_count,name,vendor_name,about,location,image_url,phone_no,email,vendor_id,adm_password,reg_date,reg_state)
             print(query)
@@ -179,3 +179,42 @@ class ServiceSpace():
             return {'response':'Updated State','details': result}
         except:
             return 'Whoops! Aye! Something terribly wrong happened!!!'
+
+    #Return all items in the items table( From all vendors)
+    def get_all_vendor_items(self):
+    
+        cur = base_creation(self,'fast_food_db')
+        query = "SELECT * FROM administrator_items"
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        orders_list = []
+        if row_count < 1:
+            return 'Nothing here for you, Bro!'
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'item_name': result[1],
+                    'details': result[2],
+                    'price' : result[3],
+                    'image_url': result[4],
+                    'item_id': result[5],
+                    'vendor_id': result[6]
+                    }
+                orders_list.append(item)
+            return {'items_list': orders_list}
+
+    #Add items to table 
+    def add_an_item_to_tbl(self,vendor_id,item_name,details,price,image_url):
+        cur = base_creation(self,'fast_food_db')
+
+        cur.execute("SELECT COUNT(id) FROM administrator_items")
+        result = cur.fetchone()
+        total_reg_count = result[0]
+        entry_count = total_reg_count + 1
+        item_id = random.randint(100,100000)
+        query = "INSERT INTO administrator_items VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}')  RETURNING id ".format(entry_count, item_name, details, price, image_url, item_id, vendor_id)
+        cur.execute(query)
+        result = cur.fetchone()[0]
+        return result

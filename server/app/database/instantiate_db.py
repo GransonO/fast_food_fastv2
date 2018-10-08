@@ -1,7 +1,6 @@
 #Create database and respective tables
 from .db_init import base_creation 
 from .tables import SqlTables
-
 class DatabaseBase():
     '''Creates Production database'''
 
@@ -12,7 +11,6 @@ class DatabaseBase():
         else:
             db_name = 'test_fast_food_db' #For testing
         return db_name
-
     
     def checkDbState(self,databasename):
         cur = base_creation(self,databasename)

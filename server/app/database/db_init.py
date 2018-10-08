@@ -8,4 +8,4 @@ def base_creation(self,db_name):
         cur = conn.cursor()
         return cur 
     except:
-        return 'Could not connect to db' 
+        return 'Could not connect to db'

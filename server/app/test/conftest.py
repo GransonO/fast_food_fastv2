@@ -1,14 +1,29 @@
-from flask import Flask
-from flask_restplus import Api, Resource
+from flask_restplus import Resource,Api
 import pytest
-from .data_handler_test import DataSet
+from app import create_app
+from .v1.data_handler_test import DataSet
+from ..api.v2.routes import Auth_Login, Auth_Sign_Up, UsersOrders
 
 #Initialize the application
-app = Flask(__name__)
+app = create_app('Testing')
 app.config['TESTING'] = True
 app.config['DEBUG'] = True
 
-api = Api(app)
+authorize_properties = {
+    'logged_in_key' : { #For logged in operations
+        'type': 'apiKey',
+        'in' : 'header',
+        'name':'APP-LOGIN-KEY'
+    }
+    ,
+    'admin-key' :{ # For admin operations
+        'type': 'apiKey',
+        'in' : 'header',
+        'name':'ADMIN-KEY'        
+    }
+}
+
+api = Api(app, authorizations=authorize_properties)
 
 #For all Orders
 class test_All(Resource):
@@ -74,11 +89,39 @@ class test_Specific(Resource):
             'available_data': result
         }}
 
-
 api.add_resource(test_All, '/v1/orders') #Test for empty Orders
 api.add_resource(test_populated, '/v1/orders/present') #Test for present Orders
 api.add_resource(test_Specific, '/v1/orders/<int:num>')
 
+#==========================# Challenge 3 #====================================
+class auth_login(Resource):
+    '''User login function'''
+    def post(self):
+        login_method = Auth_Login()
+        return login_method.post()
+
+class auth_sign_up(Resource):
+    '''Add user to account'''
+    def post(self):
+        sign_up_method = Auth_Sign_Up()
+        return sign_up_method.post()
+
+class usersOrders(Resource):
+    '''Test users orders functions '''
+    def get(self):
+        '''Get all users orders'''
+        users_orders_method = UsersOrders()
+        return users_orders_method.get()
+
+
+    
+#Authentication
+api.add_resource(auth_login,'/auth/login')
+api.add_resource(auth_sign_up,'/auth/signup')
+
+#Users actions
+api.add_resource(usersOrders,'/users/orders')
+#=============================================================================
 @pytest.fixture
 def create_test_app():
     '''Create a test app client'''

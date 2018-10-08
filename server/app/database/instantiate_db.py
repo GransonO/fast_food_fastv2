@@ -1,40 +1,59 @@
-from .db_init import base_creation
-
+#Create database and respective tables
+from .db_init import base_creation 
+from .tables import SqlTables
 class DatabaseBase():
+    '''Creates Production database'''
 
-    items_tables = "CREATE TABLE administrator.items ( id SERIAL PRIMARY KEY, item_name TEXT, details CHAR(100), price REAL, image_url CHAR(200), item_id CHAR(50))"
-    vendors_table = "CREATE TABLE administrator.registrations ( id SERIAL PRIMARY KEY, username TEXT, vendor_name TEXT, details CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), vendor_id CHAR(50), reg_date TIMESTAMP, reg_state CHAR(20))"
-    orders_table = "CREATE TABLE orders_tbl ( id SERIAL PRIMARY KEY, order_date TIMESTAMP,  order_id CHAR(50), order_detail CHAR(200), order_amount REAL, order_from CHAR(50), order_to CHAR(50), order_status CHAR(50),status_changed TIMESTAMP)"
-    customer_tables = "CREATE TABLE customer.registration( id SERIAL PRIMARY KEY, customer_name TEXT, about CHAR(255), location CHAR(100), image_url CHAR(155), phone_no CHAR(50), email CHAR(100), customer_id CHAR(50), reg_date TIMESTAMP,reg_state CHAR(20))"
+    def get_db_status(self,db_state):
+        '''Assign name to database according to states'''
+        if db_state == 'Production': #For production
+            db_name = 'fast_food_db'
+        else:
+            db_name = 'test_fast_food_db' #For testing
+        return db_name
+    
+    def checkDbState(self,databasename):
+        cur = base_creation(self,databasename)
+        return cur
 
-    database_tables = [items_tables,vendors_table,orders_table,customer_tables]
- 
-    def create_db(self):
+    def create_db(self,db_state):
         '''Creates a db in start'''
         cur = base_creation(self,'postgres')
-        cur.execute("CREATE DATABASE fast_food_db")
+        db_name = DatabaseBase.get_db_status(self,db_state)
+        print('Creating {}'.format(db_name))
+        cur.execute("CREATE DATABASE {}".format(db_name))
         cur.close()
 
     #Create the necessary tables
-    def create_tables(self):
+    def create_tables(self,db_state):
         '''Creates all db tables'''
-        cur = base_creation(self,'fast_food_db')
-        for table in DatabaseBase.database_tables:
-            cur.execute(table)
+        db_name = DatabaseBase.get_db_status(self,db_state)
+        print('Creating tables for {}'.format(db_name))
 
-        DatabaseBase.clean_up(self) 
-       
-    #Cleans memory after use   
-    def clean_up(self):
-        '''Memory clean up'''
-        cur = base_creation(self,'fast_food_db')
+        tables = None
+        if db_name == 'fast_food_db': #Production db
+            tables = SqlTables.production_database_tables
+        else:
+            tables = SqlTables.test_database_tables
+
+        cur = base_creation(self,db_name)
+        for table in tables:
+            cur.execute(table)
         cur.close()
 
+    #Drop db
+    def drop_db(self,db_state):
+        print('Droping {} database ...'.format(db_state))
+        db_name = DatabaseBase.get_db_status(self,db_state)
+        if db_state == 'Testing':
+            cur = base_creation(self,'postgres') #Use admin privilege to drop db
+            cur.execute('DROP DATABASE IF EXISTS  {}'.format(db_name))
+            cur.close()
+
+
     #Calls each build function in order
-    def order_of_creation(self):
-        try:
-            DatabaseBase.create_db(self)
-            DatabaseBase.create_tables(self)  
-            return 'Creation Success'
-        except:   
-            return 'Error Occurred' 
+    def order_of_creation(self,db_state):
+        DatabaseBase.drop_db(self,db_state) #Drop DB if exists
+        DatabaseBase.create_db(self,db_state) #Create DB
+        DatabaseBase.create_tables(self,db_state) #Create tables
+        return 'Creation Success for state {}.'.format(db_state)

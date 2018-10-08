@@ -1,5 +1,5 @@
 #Call method during setup to add all tables
-from instantiate_db import DatabaseBase
+from .instantiate_db import DatabaseBase
 
 def first_call():
     dbase = DatabaseBase()

@@ -6,6 +6,7 @@ import jwt
 from app import create_app
 from ..services.db_handler import ServiceSpace
 from app.secret import secrets 
+from .validators import Validation
 
 app_state = 'Testing'  #'Developing','Testing','Production'
 app = create_app(app_state)
@@ -134,8 +135,17 @@ class Auth_Sign_Up(Resource):
                 location = sent_data['location']
                 image_url = sent_data['image_url']
 
+                
+                mail_valid = Validation.email_Validation(self,email)
+                pass_valid = Validation.password_Validation(self,password)
+                if mail_valid == None:
+                    return {'response': 'Email does not conform to standards( yyy@xxx.(com or co.ke))'}, 400
+                
+                if pass_valid != 'Pass':
+                    return {'response': pass_valid}, 400
+
                 if type not in allowed:
-                    return {'response' : 'Sorry {}, the type value passed cannot be processed'.format(name)}, 405
+                    return {'response' : 'Sorry {}, the type value passed cannot be processed'.format(name)}, 400
 
                 else:
 
@@ -255,7 +265,6 @@ class RequestMenu(Resource):
 
         except KeyError:
             return {'data':'Please enter the data as specified'}, 400
-
 
 #Authentication
 api.add_resource(Auth_Sign_Up,'/auth/signup')

@@ -88,24 +88,5 @@ class Specific(Resource):
             'available_data' : result
         }}
 
-#For All Users
-class AllUsers(Resource):
-    def get(self):
-        return 'all users'
-
-#For a single user
-class User(Resource):
-    def get(self,info):
-        return 'get specific customer'
-
-    def post(self,info):
-        return 'Register new customer' 
-
-    def delete(self,info):
-        return 'Deleted customer'
-
-
 api.add_resource(All,'/v1/orders')
 api.add_resource(Specific,'/v1/orders/<int:num>')
-api.add_resource(AllUsers,'/v1/users')
-api.add_resource(User,'/v1/user/<int:info>')

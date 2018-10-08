@@ -6,3 +6,6 @@ my_tests.py
 .idea/
 htmlcov/
 .coverage
+secret.py
+db_secret.py
+jwt_testing.py

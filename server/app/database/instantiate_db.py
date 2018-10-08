@@ -15,15 +15,6 @@ class DatabaseBase():
         cur.execute("CREATE DATABASE fast_food_db")
         cur.close()
 
-    #Create table schema
-    def create_schema(self):
-        '''Creates a db'''
-        cur = base_creation(self,'fast_food_db')
-        cur.execute("CREATE SCHEMA administrator")
-        cur.execute("CREATE SCHEMA customer")
-
-        DatabaseBase.clean_up(self)
-
     #Create the necessary tables
     def create_tables(self):
         '''Creates all db tables'''
@@ -41,7 +32,9 @@ class DatabaseBase():
 
     #Calls each build function in order
     def order_of_creation(self):
-        DatabaseBase.create_db(self)
-        DatabaseBase.create_schema(self)
-        DatabaseBase.create_tables(self)      
-       
+        try:
+            DatabaseBase.create_db(self)
+            DatabaseBase.create_tables(self)  
+            return 'Creation Success'
+        except:   
+            return 'Error Occurred' 

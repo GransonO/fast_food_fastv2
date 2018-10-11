@@ -3,6 +3,8 @@
 //Register an Admin
 document.getElementById("admin_register").addEventListener("click",adminDetails);
 
+const modal_view = document.getElementById("modal-item");
+
 function adminDetails(){
     username = document.getElementById("user").value;
     email = document.getElementById("email").value;
@@ -43,17 +45,54 @@ function registerAdmin(username, email, phone, vendor, local, password){
             "phone_no": phone,
             "email": email
         }),
-        mode: "no-cors" 
+        mode: "cors" 
     }
 
     fetch("http://127.0.0.1:5000/auth/signup",options)
-    .then(response => {
-        return response.text()
-      })
-      .then((data) => {
-          console.log(JSON.parse(data))
+    .then((response) => response.json())
+      .then((result) => {
+          if(result.status == 0){
+              let output =`
+              <div class="modal-content">
+                <span id="close_modal" class="close">&times;</span>
+                <h3 style="color:red;"> ${result.response}</h3>
+                <hr>
+                <p>${result.data}</p>
+              </div>
+              `;              
+          document.getElementById("modal-item").innerHTML = output;
+          modal_view.style.display = "block";
+          }else{
+            let output =`
+            <div class="modal-content">
+              <span id="close_modal" class="close">&times;</span>
+              <h3 style="color:green;"> ${result.response}</h3>
+              <hr>
+              <p>${result.data}</p>
+            </div>
+            `;                
+          document.getElementById("modal-item").innerHTML = output;  
+          modal_view.style.display = "block";    
+          }
       })
       .catch((error) => {
         console.log(error)
       });
+}
+
+const close_ico = document.getElementById("close_modal");
+const twitter = document.getElementById("twitter");
+const google = document.getElementById("google");
+
+google.onclick = function() {
+    modal_view.style.display = "none";
+}
+twitter.onclick = function() {
+    modal_view.style.display = "block";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal_view) {
+        modal_view.style.display = "none";
+    }
 }

@@ -1,10 +1,12 @@
 from flask import Flask
+from flask_cors import CORS
 from instance.config import App_Configurations
 from .database.instantiate_db import DatabaseBase
 from .database.db_init import base_creation
 
 def create_app(Config_Status):
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object(App_Configurations[Config_Status]) #'Developing','Testing','Production'
     database = DatabaseBase()
 

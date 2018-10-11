@@ -48,7 +48,7 @@ def authorize_user(func):
             except:
                 return {'Token passed is invalid'}
         else:
-            return {'error':'No logged in key passed'},401
+            return {'response':'Authorization error','status':0,'data':'No logged in key passed'},401
         return func(*args, **kwargs)    
 
     return decorate_func 
@@ -65,9 +65,9 @@ def authorize_admin(adm):
                 decode_token(logged_in_token)
 
             except:
-                return {'Admin token passed is invalid'}
+                return {'response':'Authorization error','status':0,'data':'Admin token passed is invalid'}
         else:
-            return 'No Admin key passed'
+            return {'response':'Authorization error','status':0,'data':'No Admin key passed'}
         return adm(*args, **kwargs)    
 
     return decorate_adm 
@@ -89,7 +89,7 @@ class Auth_Login(Resource):
 
         try:
             if(sent_data == {}):
-                return {'data': 'You cant send an empty request'}, 403
+                return {'response':'Entry error','data': 'You cant send an empty request'}, 403
             else:
                 #Implement the JWT Authorization here
                 type = sent_data['type']
@@ -103,15 +103,15 @@ class Auth_Login(Resource):
                     if result['password']:
                         encoded = jwt.encode({'token': result['user_id']}, app.config['SECRET_KEY'], algorithm='HS256')
                         print(encoded)
-                        return {'response':'login success','login_token': encoded.decode('UTF-8')}, 202             
+                        return {'response':'login success','login_token': encoded.decode('UTF-8'),'status':1}, 202             
 
                     else:
-                        return {'response':'Your username or password may be wrong'}, 401
+                        return {'response':'Your username or password may be wrong','status':0}, 401
                 else:
-                    return {'response':'The passed type is not allowed'}, 405
+                    return {'response':'The passed type is not allowed','status':0}, 405
 
         except KeyError:
-            return {'data':'Please enter the data as specified'}, 400
+            return {'response':'Please enter the data as specified','status':0}, 400
 
 #Authentication sign up
 class Auth_Sign_Up(Resource):
@@ -123,7 +123,7 @@ class Auth_Sign_Up(Resource):
         allowed = ['ADMIN','CUSTOMER']
         try:
             if(sent_data == {}):
-                return {'data': 'You cant send an empty request'}, 403
+                return {'response': 'You cant send an empty request','status':0}, 403
             else:
                 type = sent_data['type']
                 name = sent_data['name']
@@ -139,13 +139,13 @@ class Auth_Sign_Up(Resource):
                 mail_valid = Validation.email_Validation(self,email)
                 pass_valid = Validation.password_Validation(self,password)
                 if mail_valid == None:
-                    return {'response': 'Email does not conform to standards( yyy@xxx.(com or co.ke))'}, 400
+                    return {'response': 'Email does not conform to standards( yyy@xxx.(com or co.ke))','status':0}, 400
                 
                 if pass_valid != 'Pass':
-                    return {'response': pass_valid}, 400
+                    return {'response': pass_valid,'status':0}, 400
 
                 if type not in allowed:
-                    return {'response' : 'Sorry {}, the type value passed cannot be processed'.format(name)}, 400
+                    return {'response' : 'Sorry {}, the type value passed cannot be processed'.format(name),'status':0}, 400
 
                 else:
 
@@ -153,13 +153,13 @@ class Auth_Sign_Up(Resource):
                     if (result['result'] == 'Success'):
                         response = 'Thanks {} for creating an {} account with us.'.format(name,type)
                         data = result['data']
-                        return {'response': response,'data': data}, 201 #Created 
+                        return {'response': response,'data': data,'status':1}, 201 #Created 
 
                     else:
-                        return {'data':'Sorry {} could not create an account for you. Try again or contact a human(0712 288 371) for assistance'.format(name)}, 204    
+                        return {'response':'Sorry {} could not create an account for you. Try again or contact a human(0712 288 371) for assistance'.format(name),'status':0}, 204    
 
         except KeyError:
-            return {'data':'Please enter the data as specified'}, 400
+            return {'response':'Please enter the data as specified','status':0}, 400
 
 #Users orders requests
 class UsersOrders(Resource):
@@ -171,7 +171,7 @@ class UsersOrders(Resource):
         logged_in_token = request.headers['APP-LOGIN-KEY']
         customer_id = decode_token(logged_in_token)
         result = ServiceSpace.get_all_orders(self,customer_id,app_state)
-        return {'data':result}, 200 #Return list with all customer items details
+        return {'response':'Retrieving {} entries'.format(len(result)),'data':result,'status':1}, 200 #Return list with all customer items details
 
     @api.expect(order_request)    
     @api.doc(security='logged_in_key')
@@ -181,7 +181,7 @@ class UsersOrders(Resource):
         sent_data = api.payload
         try:
             if(sent_data == {}):
-                return {'data': 'You can\'t send an empty request'}, 204
+                return {'response':'Order Error','status':0,'data': 'You can\'t send an empty request'}, 204
             else:
                 logged_in_token = request.headers['APP-LOGIN-KEY']
                 customer_id = decode_token(logged_in_token)
@@ -190,10 +190,10 @@ class UsersOrders(Resource):
                 order_from = customer_id
                 order_to = sent_data['order_to']
                 result = ServiceSpace.add_order_to_db(self,order_detail,order_amount,order_from,order_to,app_state)
-                return {'data': result}, 201    
+                return {'response':'Order Created','status':1,'data': result}, 201    
 
         except KeyError:
-            return {'data':'Please enter the data as specified'}, 400
+            return {'response':'Order Error','status':0,'data':'Please enter the data as specified'}, 400
 
 #Admin Actions
 class AdminAllOrders(Resource):
@@ -204,7 +204,7 @@ class AdminAllOrders(Resource):
         logged_in_token = request.headers['ADMIN-KEY']
         admin_id = decode_token(logged_in_token)
         result = ServiceSpace.get_all_admin_orders(self,admin_id,app_state)
-        return {'data':result}, 200
+        return {'response':'Request Success','status':1,'data':result}, 200
 
 #Admin Specific Actions
 class AdminSpecificOrders(Resource):
@@ -214,7 +214,7 @@ class AdminSpecificOrders(Resource):
     def get(self,order_id):
         '''Get a specific order ( By Admin Only)'''
         result = ServiceSpace.get_specific_order(self,order_id,app_state)
-        return {'response':result}, 200
+        return {'response':'Request Success','status':1,'data':result}, 200
 
     @api.expect(put_item_details)    
     @api.doc(security='admin-key')
@@ -225,17 +225,17 @@ class AdminSpecificOrders(Resource):
         allowed = ['NEW', 'PROCESSING', 'COMPLETED', 'CANCELLED']
         try:
             if(sent_data == {}):
-                return {'response': 'You cant send an empty request'}, 204
+                return {'response':'Request Error','status':0,'data': 'You cant send an empty request'}, 204
             else:
                 status  = sent_data['status']
                 if status in allowed:
                     result = ServiceSpace.update_an_item(self,status,order_id,app_state)
-                    return {'response': result} 
+                    return {'response':'Update Success','status':1,'data': result} 
                 else:
-                    return {'response': 'The status type is not allowed'}, 400   
+                    return {'response':'Type Error','status':0,'data': 'The status type is not allowed'}, 400   
 
         except KeyError:
-            return {'response':'Please enter the data as specified'}, 400
+            return {'response':'Entry Error','status':0,'data':'Please enter the data as specified'}, 400
 
 #Menu Requesting
 class RequestMenu(Resource):
@@ -252,7 +252,7 @@ class RequestMenu(Resource):
         sent_data = api.payload
         try:
             if(sent_data == {}):
-                return {'data': 'You cant post an empty request'}, 204
+                return {'response':'Request Error','status':0,'data': 'You cant post an empty request'}, 204
             else:
                 logged_in_token = request.headers['ADMIN-KEY']
                 vendor_id = decode_token(logged_in_token)
@@ -261,10 +261,10 @@ class RequestMenu(Resource):
                 price = sent_data['price']
                 image_url  = sent_data['image_url']
                 result = ServiceSpace.add_an_item_to_tbl(self,vendor_id,item_name,details,price,image_url,app_state)
-                return {'data': result}, 200 
+                return {'response':'Posting Success','status':1,'data': result}, 200 
 
         except KeyError:
-            return {'data':'Please enter the data as specified'}, 400
+            return {'response':'Request Error','status':0,'data':'Please enter the data as specified'}, 400
 
 #Authentication
 api.add_resource(Auth_Sign_Up,'/auth/signup')

@@ -170,7 +170,7 @@ class UsersOrders(Resource):
         ''' Users get the order history for a particular user'''
         logged_in_token = request.headers['APP-LOGIN-KEY']
         customer_id = decode_token(logged_in_token)
-        result = ServiceSpace.get_all_orders(self,customer_id,app_state)
+        result = ServiceSpace.get_all_raw_orders(self,customer_id,app_state)
         return {'response':'Retrieving {} entries'.format(len(result)),'data':result,'status':1}, 200 #Return list with all customer items details
 
     @api.expect(order_request)    
@@ -190,20 +190,46 @@ class UsersOrders(Resource):
                 order_from = customer_id
                 order_to = sent_data['order_to']
                 result = ServiceSpace.add_order_to_db(self,order_detail,order_amount,order_from,order_to,app_state)
-                return {'response':'Order Created','status':1,'data': result}, 201    
+                return {'response':'Order Created','status':1,'results': result}, 201    
 
         except KeyError:
             return {'response':'Order Error','status':0,'data':'Please enter the data as specified'}, 400
+
+
+#Users orders requests
+class UsersOrdersGet(Resource):
+    
+    @api.doc(security='logged_in_key') # Added to functions that require token access.
+    @authorize_user
+    def get(self,status):
+        ''' Users get the order history for a particular user in particular state'''
+        allowed = ['NEW','PROCESSING', 'COMPLETED', 'CANCELLED']
+        status = status.upper()        
+        if status not in allowed:
+             return {'response':'Request Error','status':0,'data':'Only {} allowed'.format(allowed)}, 200
+
+        logged_in_token = request.headers['APP-LOGIN-KEY']
+        customer_id = decode_token(logged_in_token)
+        result = ServiceSpace.get_all_orders(self,customer_id,app_state,status)
+        return {'response':'Retrieving {} entries'.format(len(result)),'data':result,'status':1}, 200 #Return list with all customer items details
+
 
 #Admin Actions
 class AdminAllOrders(Resource):
     @api.doc(security='admin-key') # Added to functions that require token access.
     @authorize_admin
-    def get(self):
+    def get(self,status):
+        allowed = ['NEW','PROCESSING', 'COMPLETED', 'CANCELLED']
+        status = status.upper()        
+        if status not in allowed:
+             return {'response':'Request Error','status':0,'data':'Only {} allowed'.format(allowed)}, 200
+
         ''' Admin get all orders placed (Admin Only)'''
         logged_in_token = request.headers['ADMIN-KEY']
         admin_id = decode_token(logged_in_token)
-        result = ServiceSpace.get_all_admin_orders(self,admin_id,app_state)
+        result = ServiceSpace.get_all_admin_orders(self,admin_id,app_state,status)
+        if result == "There's nothing here, yet!":
+            return {'response':'Request Success','status':0,'data':result}, 200    
         return {'response':'Request Success','status':1,'data':result}, 200
 
 #Admin Specific Actions
@@ -230,7 +256,7 @@ class AdminSpecificOrders(Resource):
                 status  = sent_data['status']
                 if status in allowed:
                     result = ServiceSpace.update_an_item(self,status,order_id,app_state)
-                    return {'response':'Update Success','status':1,'data': result} 
+                    return result
                 else:
                     return {'response':'Type Error','status':0,'data': 'The status type is not allowed'}, 400   
 
@@ -242,7 +268,7 @@ class RequestMenu(Resource):
     def get(self):
         '''Preview items of a specific restaurant'''      
         result = ServiceSpace.get_all_vendor_items(self,app_state)
-        return {'data':result}
+        return {'response':'Request Success','status':1,'data':result}
 
     @api.expect(new_item_details)
     @api.doc(security='admin-key')
@@ -266,16 +292,42 @@ class RequestMenu(Resource):
         except KeyError:
             return {'response':'Request Error','status':0,'data':'Please enter the data as specified'}, 400
 
+class AdminMenu(Resource):    
+    @api.doc(security='admin-key')
+    @authorize_admin
+    def get(self):
+        '''Get all the specific admins Item'''
+        '''Preview items of a specific restaurant'''    
+        logged_in_token = request.headers['ADMIN-KEY']  
+        vendor_id = decode_token(logged_in_token)
+        result = ServiceSpace.get_specific_vendor_items(self,app_state,vendor_id)
+        return {'response':'Request Success','status':1,'data':result}
+
+class SpecificAdminMenu(Resource):
+    
+    @api.doc(security='admin-key')
+    @authorize_admin
+    def delete(self,item_id):
+        '''Removes A Specific Admin Item'''
+        ServiceSpace.delete_from_items(self,app_state,item_id)
+        return {'response':'Request Success','status':1}
+
+
 #Authentication
 api.add_resource(Auth_Sign_Up,'/auth/signup')
 api.add_resource(Auth_Login,'/auth/login')
 
 #Users actions
 api.add_resource(UsersOrders,'/users/orders')
+api.add_resource(UsersOrdersGet,'/users/orders/<string:status>')
 
 #Administrators
-api.add_resource(AdminAllOrders,'/orders/')
+api.add_resource(AdminAllOrders,'/orders/<string:status>')
 api.add_resource(AdminSpecificOrders,'/orders/<int:order_id>')
 
 #Menu 
 api.add_resource(RequestMenu,'/menu')
+
+#Admin Menu
+api.add_resource(AdminMenu,'/admin/menu')
+api.add_resource(SpecificAdminMenu,'/admin/menu/<int:item_id>')

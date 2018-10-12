@@ -115,7 +115,35 @@ class ServiceSpace():
             return {'response':'The user type is not allowed'}
       
     #Query all items with customers id from orders table
-    def get_all_orders(self,customer_id,app_state):
+    def get_all_orders(self,customer_id,app_state,status):
+
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM orders_tbl WHERE order_from = '{}' AND order_status='{}'".format(customer_id,status)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        orders_list = []
+        if row_count < 1:
+            return 'You have not ordered anything yet! '
+        else:
+            print(results)
+            for result in results:
+                item = {
+                        'order_date' : str(result[1]),
+                        'order_id' : result[2],
+                        'order_detail' : ServiceSpace.getItemsDetails(self,app_state,result[3]),
+                        'order_amount' : result[4],
+                        'order_from' : result[5],
+                        'order_to' : ServiceSpace.getVendorDetails(self,app_state,result[6]),
+                        'order_status' : result[7],
+                        'status_changed' : str(result[8])
+                    }
+                orders_list.append(item)
+            return {'orders_list': orders_list} 
+
+    #Query all items with customers id from orders table
+    def get_all_raw_orders(self,customer_id,app_state):
 
         db_name = ServiceSpace.get_db_status(self,app_state)
         cur = base_creation(self,db_name)
@@ -132,10 +160,10 @@ class ServiceSpace():
                 item = {
                         'order_date' : str(result[1]),
                         'order_id' : result[2],
-                        'order_detail' : result[3],
+                        'order_detail' : ServiceSpace.getItemsDetails(self,app_state,result[3]),
                         'order_amount' : result[4],
                         'order_from' : result[5],
-                        'order_to' : result[6],
+                        'order_to' : ServiceSpace.getVendorDetails(self,app_state,result[6]),
                         'order_status' : result[7],
                         'status_changed' : str(result[8])
                     }
@@ -175,31 +203,75 @@ class ServiceSpace():
             return {'result':'Failed'}
 
     #Query all orders from all customers
-    def get_all_admin_orders(self,admin_id,app_state):
+    def get_all_admin_orders(self,admin_id,app_state,status):
 
         db_name = ServiceSpace.get_db_status(self,app_state)
         cur = base_creation(self,db_name)
-        query = "SELECT * FROM orders_tbl WHERE order_to = '{}'".format(admin_id)
+        query = "SELECT * FROM orders_tbl WHERE order_to = '{}' AND order_status = '{}'".format(admin_id,status)
         cur.execute(query)
         results = cur.fetchall() #Fetches data in a list
         row_count = cur.rowcount
         orders_list = []
         if row_count < 1:
-            return 'You have not ordered anything yet! '
+            return 'There\'s nothing here, yet!'
         else:
             print(results)
             for result in results:
                 item = {
                         'order_date' : str(result[1]),
                         'order_id' : result[2],
-                        'order_detail' : result[3],
+                        'item_details' : ServiceSpace.getItemsDetails(self,app_state,result[3]),
                         'order_amount' : result[4],
-                        'order_from' : result[5],
+                        'order_from' : ServiceSpace.getCustomerDetails(self,app_state,result[5]),
                         'order_status' : result[7],
                         'status_changed' : str(result[8])
                     }
                 orders_list.append(item)
             return {'adm_orders_list': orders_list} 
+
+
+    def getItemsDetails(self,app_state,item_id):
+        '''Gets Items details from the orders list'''        
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM administrator_items WHERE item_id = '{}'".format(item_id)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        if row_count < 1:
+            return {'response':'Nothing here for you, Human!','mess':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'item_name': result[1],
+                    'details': result[2],
+                    'price' : result[3],
+                    'image_url': result[4],
+                    'item_id': result[5],
+                    'vendor_id': result[6]
+                    }
+            return item
+
+    def getCustomerDetails(self,app_state,customer_id):
+        '''Get details of the customer'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM customer_registration WHERE customer_id = '{}'".format(customer_id)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        if row_count < 1:
+            return {'response':'No user with that account, Human!','mess':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'customer_name': result[1],
+                    'location': result[3],
+                    'phone_number' : result[5]
+                    }
+            return item
 
     #Query specific order from orders table
     def get_specific_order(self,order_id,app_state):
@@ -212,7 +284,7 @@ class ServiceSpace():
         row_count = cur.rowcount
         #orders_list = []
         if row_count < 1:
-            return 'Nothing here with that ID, Bro!'
+            return {'response':'Nothing here with that ID, Bro!','status':0}
         else:
             print(result)
             #for result in results:
@@ -226,7 +298,7 @@ class ServiceSpace():
                     'status_changed' : str(result[8])
                 }
             #orders_list.append(item)
-            return {'specific_order': item} 
+            return {'specific_order': item,'status':1} 
 
     #Update the status of an order by its ID
     def update_an_item(self,status,order_id,app_state):
@@ -240,9 +312,9 @@ class ServiceSpace():
             cur.execute(query)
             #retrieve updated order
             result = ServiceSpace.get_specific_order(self,order_id,app_state)
-            return {'response':'Updated State','details': result}
+            return result
         except:
-            return {'response':'Whoops! Aye! Something terribly wrong happened!!!'}
+            return {'response':'Whoops! Aye! Something terribly wrong happened!!!','status':0}
 
     #Return all items in the items table( From all vendors)
     def get_all_vendor_items(self,app_state):
@@ -255,7 +327,7 @@ class ServiceSpace():
         row_count = cur.rowcount
         orders_list = []
         if row_count < 1:
-            return 'Nothing here for you, Bro!'
+            return {'response':'Nothing here for you, Human!','mess':0}
         else:
             print(results)
             for result in results:
@@ -265,10 +337,32 @@ class ServiceSpace():
                     'price' : result[3],
                     'image_url': result[4],
                     'item_id': result[5],
-                    'vendor_id': result[6]
+                    'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6])
                     }
                 orders_list.append(item)
             return {'items_list': orders_list}
+
+    def getVendorDetails(self,app_state,vendor_id):
+        '''Get details of the customer'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM administrator_registrations WHERE vendor_id = '{}'".format(vendor_id)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        if row_count < 1:
+            return {'response':'No vendor with that account, Human!','mess':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'vendor_name': result[2],
+                    'location': result[4],
+                    'phone_number' : result[6],
+                    'email' : result[7],
+                    'vendor_id' : result[8]
+                    }
+            return item
 
     #Add items to table 
     def add_an_item_to_tbl(self,vendor_id,item_name,details,price,image_url,app_state):
@@ -297,3 +391,38 @@ class ServiceSpace():
             return {'result':'Success','data': item}
         else:
             return {'result':'Failed'}
+
+
+    #Return all items in the items table( From all vendors)
+    def get_specific_vendor_items(self,app_state,vendor_id):
+    
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM administrator_items WHERE vendor_id = '{}'".format(vendor_id)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        orders_list = []
+        if row_count < 1:
+            return {'message':'Nothing here for you, Human!','mess':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'item_name': result[1],
+                    'details': result[2],
+                    'price' : result[3],
+                    'image_url': result[4],
+                    'item_id': result[5],
+                    'vendor_id': result[6]
+                    }
+                orders_list.append(item)
+            return {'items_list': orders_list}
+
+    def delete_from_items(self,app_state,item_id):
+        '''Delete item from table'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        sql = "DELETE FROM administrator_items WHERE item_id = '{}'".format(item_id)
+        cur.execute(sql)
+        

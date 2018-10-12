@@ -219,6 +219,7 @@ class AdminAllOrders(Resource):
     @api.doc(security='admin-key') # Added to functions that require token access.
     @authorize_admin
     def get(self,status):
+        '''Get orders as specified ~NEW,PROCESSING, COMPLETED, CANCELLED~ '''
         allowed = ['NEW','PROCESSING', 'COMPLETED', 'CANCELLED']
         status = status.upper()        
         if status not in allowed:

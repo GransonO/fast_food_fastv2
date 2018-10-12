@@ -26,7 +26,7 @@ authorize_properties = {
     }
 }
 
-api = Api(app, authorizations=authorize_properties)
+api = Api(app, version='1.2', title='Fast Food Fast API', description='The Fast food fast APIs are for your daily food usage. Think Eatout, Revamped !!!',contact_email= 'oyombegranson@gmail.com',  default ='Fast Food Fast', default_label='All backend API operations', authorizations=authorize_properties )
 
 auth_login_ = api.model('User Login',{'type': fields.String('The user can be either ADMIN or CUSTOMER'),'name': fields.String('The username registered'),'password': fields.String('The users password')})
 auth_sign_up = api.model('User Sign Up',{'type': fields.String('The user can be either "ADMIN" or "CUSTOMER"'),'name': fields.String('The username registered'),'vendor_name': fields.String('The if user is Admin'),'password': fields.String('The users password'),'about': fields.String('Brief Users description'),'location': fields.String('The users location'),'image_url': fields.String('The users uploaded image'),'phone_no': fields.String('The users phone number'),'email': fields.String('The users email')})

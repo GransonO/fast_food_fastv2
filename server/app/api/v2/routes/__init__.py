@@ -30,9 +30,10 @@ api = Api(app, version='1.2', title='Fast Food Fast API', description='The Fast 
 
 auth_login_ = api.model('User Login',{'type': fields.String('The user can be either ADMIN or CUSTOMER'),'name': fields.String('The username registered'),'password': fields.String('The users password')})
 auth_sign_up = api.model('User Sign Up',{'type': fields.String('The user can be either "ADMIN" or "CUSTOMER"'),'name': fields.String('The username registered'),'vendor_name': fields.String('The if user is Admin'),'password': fields.String('The users password'),'about': fields.String('Brief Users description'),'location': fields.String('The users location'),'image_url': fields.String('The users uploaded image'),'phone_no': fields.String('The users phone number'),'email': fields.String('The users email')})
-order_request = api.model('User Order request', { 'order_to': fields.String('The vendor of the item'), 'order_amount': fields.Float('The total transaction amount') , 'order_detail': fields.String('Brief description of the order') })
-put_item_details = api.model('Admin updating request', {'status': fields.String('Order status. Can be either NEW(CUSTOMER), PROCESSING(AUTO), COMPLETED(ADMIN), CANCELLED(ADMIN)') })
+order_request = api.model('User Order request', { 'order_to': fields.String('The vendor of the item'), 'order_amount': fields.Float('The total transaction amount') , 'order_quantity': fields.Integer('The number of items to order'), 'item_id': fields.String('The ordered item ID') })
+put_item_status = api.model('Admin updating request', {'status': fields.String('Order status. Can be either NEW(CUSTOMER), PROCESSING(AUTO), COMPLETED(ADMIN), CANCELLED(ADMIN)') })
 new_item_details = api.model('New Item Posting', { 'item_name': fields.String('Name of item'), 'details': fields.String('Brief description of item'),'price' : fields.Float('Price of the item'), 'image_url':fields.String('Url to hosted item\'s image')})
+put_item_details = api.model('Updating an Item',{'item_name': fields.String('Name of item'), 'details': fields.String('Brief description of item'),'price' : fields.Float('Price of the item'), 'image_url':fields.String('Url to hosted item\'s image'), 'item_id':fields.Integer('Generated Item Id')})
 
 #Authentication for all users decorator
 def authorize_user(func):
@@ -185,16 +186,16 @@ class UsersOrders(Resource):
             else:
                 logged_in_token = request.headers['APP-LOGIN-KEY']
                 customer_id = decode_token(logged_in_token)
-                order_detail = sent_data['order_detail']
+                item_id = sent_data['item_id']
                 order_amount = sent_data['order_amount']
+                order_quantity = sent_data['order_quantity']
                 order_from = customer_id
                 order_to = sent_data['order_to']
-                result = ServiceSpace.add_order_to_db(self,order_detail,order_amount,order_from,order_to,app_state)
+                result = ServiceSpace.add_order_to_db(self,item_id,order_amount,order_quantity,order_from,order_to,app_state)
                 return {'response':'Order Created','status':1,'results': result}, 201    
 
         except KeyError:
             return {'response':'Order Error','status':0,'data':'Please enter the data as specified'}, 400
-
 
 #Users orders requests
 class UsersOrdersGet(Resource):
@@ -212,7 +213,6 @@ class UsersOrdersGet(Resource):
         customer_id = decode_token(logged_in_token)
         result = ServiceSpace.get_all_orders(self,customer_id,app_state,status)
         return {'response':'Retrieving {} entries'.format(len(result)),'data':result,'status':1}, 200 #Return list with all customer items details
-
 
 #Admin Actions
 class AdminAllOrders(Resource):
@@ -243,7 +243,7 @@ class AdminSpecificOrders(Resource):
         result = ServiceSpace.get_specific_order(self,order_id,app_state)
         return {'response':'Request Success','status':1,'data':result}, 200
 
-    @api.expect(put_item_details)    
+    @api.expect(put_item_status)    
     @api.doc(security='admin-key')
     @authorize_admin
     def put(self,order_id):
@@ -289,6 +289,27 @@ class RequestMenu(Resource):
                 image_url  = sent_data['image_url']
                 result = ServiceSpace.add_an_item_to_tbl(self,vendor_id,item_name,details,price,image_url,app_state)
                 return {'response':'Posting Success','status':1,'data': result}, 200 
+
+        except KeyError:
+            return {'response':'Request Error','status':0,'data':'Please enter the data as specified'}, 400
+
+    @api.expect(put_item_details)
+    @api.doc(security='admin-key')
+    @authorize_admin
+    def put(self):
+        '''Update a meal option in the menu (Admin)'''
+        sent_data = api.payload
+        try:
+            if(sent_data == {}):
+                return {'response':'Request Error','status':0,'data': 'You cant update an empty request'}, 204
+            else:
+                item_name = sent_data['item_name']
+                details = sent_data['details']
+                price = sent_data['price']
+                image_url  = sent_data['image_url']
+                item_id  = sent_data['item_id']
+                result = ServiceSpace.update_an_item_in_tbl(self,item_name,details,price,image_url,app_state,item_id)
+                return result, 200 
 
         except KeyError:
             return {'response':'Request Error','status':0,'data':'Please enter the data as specified'}, 400

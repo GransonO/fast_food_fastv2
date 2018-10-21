@@ -133,11 +133,12 @@ class ServiceSpace():
                         'order_date' : str(result[1]),
                         'order_id' : result[2],
                         'order_detail' : ServiceSpace.getItemsDetails(self,app_state,result[3]),
-                        'order_amount' : result[4],
-                        'order_from' : result[5],
-                        'order_to' : ServiceSpace.getVendorDetails(self,app_state,result[6]),
-                        'order_status' : result[7],
-                        'status_changed' : str(result[8])
+                        'order_quantity' : result[4],
+                        'order_amount' : result[5],
+                        'order_from' : result[6],
+                        'order_to' : ServiceSpace.getVendorDetails(self,app_state,result[7]),
+                        'order_status' : result[8],
+                        'status_changed' : str(result[9])
                     }
                 orders_list.append(item)
             return {'orders_list': orders_list} 
@@ -161,17 +162,18 @@ class ServiceSpace():
                         'order_date' : str(result[1]),
                         'order_id' : result[2],
                         'order_detail' : ServiceSpace.getItemsDetails(self,app_state,result[3]),
-                        'order_amount' : result[4],
-                        'order_from' : result[5],
-                        'order_to' : ServiceSpace.getVendorDetails(self,app_state,result[6]),
-                        'order_status' : result[7],
-                        'status_changed' : str(result[8])
+                        'order_quantity' : result[4],
+                        'order_amount' : result[5],
+                        'order_from' : result[6],
+                        'order_to' : ServiceSpace.getVendorDetails(self,app_state,result[7]),
+                        'order_status' : result[8],
+                        'status_changed' : str(result[9])
                     }
                 orders_list.append(item)
             return {'orders_list': orders_list}
 
     #Adds ordered items to orders table
-    def add_order_to_db(self,order_detail,order_amount,order_from,order_to,app_state):
+    def add_order_to_db(self,order_detail,order_amount,order_quantity,order_from,order_to,app_state):
 
         db_name = ServiceSpace.get_db_status(self,app_state)
         cur = base_creation(self,db_name)
@@ -184,7 +186,7 @@ class ServiceSpace():
         order_id = random.randint(100,1000000)
         order_status = 'NEW' # PROCESSING(AUTO), COMPLETED(ADMIN), CANCELLED(ADMIN)
         status_changed = datetime.datetime.now()
-        query = "INSERT INTO orders_tbl values ({}, '{}',  '{}', '{}', '{}', '{}', '{}', '{}','{}')  RETURNING order_id".format(entry_count,order_date,order_id,order_detail,order_amount,order_from,order_to,order_status,status_changed)  
+        query = "INSERT INTO orders_tbl values ({}, '{}',  '{}', '{}', {}, '{}', '{}', '{}', '{}','{}')  RETURNING order_id".format(entry_count,order_date,order_id,order_detail,order_quantity,order_amount,order_from,order_to,order_status,status_changed)  
         cur.execute(query)
         result = cur.fetchone()[0]
         print('Order id : {} Result : {}'.format(order_id,result))
@@ -391,6 +393,33 @@ class ServiceSpace():
             return {'result':'Success','data': item}
         else:
             return {'result':'Failed'}
+
+
+    #Update items in table 
+    def update_an_item_in_tbl(self,item_name,details,price,image_url,app_state,item_id):
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        result = None
+        try:
+            query = "UPDATE administrator_items SET item_name = '{}',details = '{}',price = '{}',image_url = '{}' WHERE item_id = '{}'  RETURNING item_id ".format(item_name, details, price, image_url, item_id)
+            cur.execute(query)
+            result = cur.fetchone()[0]
+            cur.close()
+        except Exception as e:
+            print('An error occurred.The error : {}'.format(e))
+
+        print('result is {} Item is {}'.format(result,item_id))
+        if int(result) == int(item_id):
+            item = {
+                'details' : details,
+                'item_name' : item_name,
+                'price' : price,
+                'image_url' : image_url,
+                'item_id' : item_id
+            }
+            return {'response':'Update Success','data': item, 'status' : 1}
+        else:
+            return {'response':'Update Failed', 'data': 'None', 'status' : 0}
 
 
     #Return all items in the items table( From all vendors)

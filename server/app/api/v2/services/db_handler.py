@@ -223,10 +223,11 @@ class ServiceSpace():
                         'order_date' : str(result[1]),
                         'order_id' : result[2],
                         'item_details' : ServiceSpace.getItemsDetails(self,app_state,result[3]),
-                        'order_amount' : result[4],
-                        'order_from' : ServiceSpace.getCustomerDetails(self,app_state,result[5]),
-                        'order_status' : result[7],
-                        'status_changed' : str(result[8])
+                        'order_quantity' : result[4],
+                        'order_amount' : result[5],
+                        'order_from' : ServiceSpace.getCustomerDetails(self,app_state,result[6]),
+                        'order_status' : result[8],
+                        'status_changed' : str(result[9])
                     }
                 orders_list.append(item)
             return {'adm_orders_list': orders_list} 
@@ -251,7 +252,8 @@ class ServiceSpace():
                     'price' : result[3],
                     'image_url': result[4],
                     'item_id': result[5],
-                    'vendor_id': result[6]
+                    'vendor_id': result[6],
+                    'category' : result[7]
                     }
             return item
 
@@ -339,7 +341,8 @@ class ServiceSpace():
                     'price' : result[3],
                     'image_url': result[4],
                     'item_id': result[5],
-                    'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6])
+                    'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),
+                    'category' : result[7]
                     }
                 orders_list.append(item)
             return {'items_list': orders_list}
@@ -367,7 +370,7 @@ class ServiceSpace():
             return item
 
     #Add items to table 
-    def add_an_item_to_tbl(self,vendor_id,item_name,details,price,image_url,app_state):
+    def add_an_item_to_tbl(self,vendor_id,item_name,details,price,image_url,category,app_state):
         db_name = ServiceSpace.get_db_status(self,app_state)
         cur = base_creation(self,db_name)
 
@@ -377,7 +380,7 @@ class ServiceSpace():
         entry_count = total_reg_count + 1
         item_id = random.randint(100,100000)
         added_date = datetime.datetime.now()
-        query = "INSERT INTO administrator_items VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}')  RETURNING item_id ".format(entry_count, item_name, details, price, image_url, item_id, vendor_id)
+        query = "INSERT INTO administrator_items VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')  RETURNING item_id ".format(entry_count, item_name, details, price, image_url, item_id, vendor_id, category)
         cur.execute(query)
         result = cur.fetchone()[0]
         print('result is {} Item is {}'.format(result,item_id))
@@ -388,7 +391,8 @@ class ServiceSpace():
                 'item_name' : item_name,
                 'vendor_id' : vendor_id,
                 'image_url' : image_url,
-                'item_id' : item_id
+                'item_id' : item_id,
+                'category' : category
             }
             return {'result':'Success','data': item}
         else:
@@ -443,7 +447,8 @@ class ServiceSpace():
                     'price' : result[3],
                     'image_url': result[4],
                     'item_id': result[5],
-                    'vendor_id': result[6]
+                    'vendor_id': result[6],
+                    'category' : result[7]
                     }
                 orders_list.append(item)
             return {'items_list': orders_list}
@@ -454,4 +459,98 @@ class ServiceSpace():
         cur = base_creation(self,db_name)
         sql = "DELETE FROM administrator_items WHERE item_id = '{}'".format(item_id)
         cur.execute(sql)
+
+    def get_profile(self,app_state,id,type):
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        if(type == 'admin'):
+            query = "SELECT * FROM administrator_registrations WHERE vendor_id = '{}'".format(id)
+            cur.execute(query)
+            results = cur.fetchall()  
+            if len(results) < 1:
+                return {'response' : 'Admin Data Fetch Error', 'data' : 'That admin does not exist', 'status' : 0 }  
+
+            for result in results:
+                admin_details = {
+                    'username' : result[1],
+                    'vendor_name': result[2],
+                    'details': result[3],
+                    'location': result[4],
+                    'image_url': result[5],
+                    'phone_number' : result[6],
+                    'email' : result[7]
+                    }
+            return {'response' : 'Admin Data Fetched Success', 'data' : admin_details, 'status' : 1 }
+
+        elif (type == 'customer'):
+            query = "SELECT * FROM customer_registration WHERE customer_id = '{}'".format(id)
+            cur.execute(query)
+            results = cur.fetchall()  
+            if len(results) < 1:
+                return {'response' : 'Customer Data Fetch Error', 'data' : 'That customer does not exist', 'status' : 0 }  
+
+            for result in results:
+                customer_details = {
+                    'customer_name' : result[1],
+                    'about' : result[2],
+                    'location' : result[3],
+                    'image_url' : result[4],
+                    'phone_no' : result[5],
+                    'email' : result[6],
+                    'customer_id' : result[7],
+                    'reg_date' : str(result[9])
+                }
+            return {'response' : 'Customer Data Fetched Success', 'data' : customer_details, 'status' : 1 }
         
+    def update_user_details(self,customer_name,email,phone,location,about,customer_id,app_state):
+        '''Update the customer's details'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        result = None
+        try:
+            query = "UPDATE customer_registration SET customer_name = '{}',about = '{}',phone_no = '{}',email = '{}' WHERE customer_id = '{}'  RETURNING customer_id ".format(customer_name, about, phone, email, customer_id)
+            cur.execute(query)
+            result = cur.fetchone()[0]
+            cur.close()
+        except Exception as e:
+            print('An error occurred.The error : {}'.format(e))
+
+        print('result is {} Item is {}'.format(result,customer_id))
+        if result == customer_id:
+            customer_details = {
+                'customer_name' : customer_name,
+                'email'  : email,
+                'phone' : phone,
+                'location' : location,
+                'about' : about
+                }
+            return {'response':'Update Success','data': customer_details, 'status' : 1}
+        else:
+            return {'response':'Update Failed', 'data': 'None', 'status' : 0}
+        
+
+    def get_related_items(self,item_id,category,app_state):
+        '''Fetch all related Items'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM administrator_items WHERE category = '{}' AND item_id NOT IN ('{}') ORDER BY item_id LIMIT 3 ".format(category,item_id)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        orders_list = []
+        if row_count < 1:
+            return {'response':'No related Items','status':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'item_name': result[1],
+                    'details': result[2],
+                    'price' : result[3],
+                    'image_url': result[4],
+                    'item_id': result[5],
+                    'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),                    
+                    'category' : result[7]
+                    }
+                orders_list.append(item)
+            return {'related_list': orders_list}

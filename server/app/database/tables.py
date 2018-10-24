@@ -1,5 +1,6 @@
 class SqlTables():
     '''Holds all database tables'''
+    
     #Production tables
     items_tables = "CREATE TABLE administrator_items ( id REAL, item_name TEXT, details TEXT, price REAL, image_url TEXT, item_id TEXT  PRIMARY KEY, vendor_id TEXT, category TEXT)"
     vendors_table = "CREATE TABLE administrator_registrations ( id REAL, username TEXT, vendor_name TEXT, details TEXT, location TEXT, image_url TEXT, phone_no TEXT, email TEXT, vendor_id TEXT PRIMARY KEY, adm_password TEXT, reg_date TIMESTAMP, reg_state TEXT)"

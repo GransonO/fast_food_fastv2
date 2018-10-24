@@ -554,3 +554,79 @@ class ServiceSpace():
                     }
                 orders_list.append(item)
             return {'related_list': orders_list}
+
+    def get_category_items(self,category,app_state):
+        '''Fetch all items as per category passed'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM administrator_items WHERE category = '{}'".format(category)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        category_list = []
+        if row_count < 1:
+            return {'response':'There are no Items in {} category'.format(category),'status':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'item_name': result[1],
+                    'details': result[2],
+                    'price' : result[3],
+                    'image_url': result[4],
+                    'item_id': result[5],
+                    'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),                    
+                    'category' : result[7]
+                    }
+                category_list.append(item)
+            return {'category_list': category_list}
+
+
+    def get_vendor_items(self,vendor_id,app_state):
+        '''Fetch all items as per vendor passed'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM administrator_items WHERE vendor_id = '{}'".format(vendor_id)
+        print(query)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        category_list = []
+        if row_count < 1:
+            return {'response':'Could not find items from that vendor','status':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'item_name': result[1],
+                    'details': result[2],
+                    'price' : result[3],
+                    'image_url': result[4],
+                    'item_id': result[5],
+                    'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),                    
+                    'category' : result[7]
+                    }
+                category_list.append(item)
+            return {'category_list': category_list}
+
+    def get_vendors(self,app_state):
+        '''Fetch all vendors passed'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM administrator_registrations "
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        vendors_list = []
+        if row_count < 1:
+            return {'response':'No vendors in her, Do some marketing bro!','status':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'vendor_name': result[2],
+                    'vendor_id' : result[8]
+                    }
+                vendors_list.append(item)
+            return {'vendors_list': vendors_list}
+

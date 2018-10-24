@@ -26,8 +26,16 @@ authorize_properties = {
     }
 }
 
-api = Api(app, version='1.2', title='Fast Food Fast API', description='The Fast food fast APIs are for your daily food usage. Think Eatout, Revamped !!!',contact_email= 'oyombegranson@gmail.com',  default ='Fast Food Fast', default_label='All backend API operations', authorizations=authorize_properties )
+api = Api(app, version='1.2', title='Fast Food Fast API', description='The Fast food fast APIs are for your daily food usage. Think Eatout, Revamped !!!',contact_email= 'oyombegranson@gmail.com',  default ='General', default_label='Non specific API operations', authorizations=authorize_properties )
 
+#Namespaces
+auth = api.namespace('Authentication', description='Login and Sign up processes',path='/')
+profile = api.namespace('Profile', description='User & Administrator profiles',path='/')
+test = api.namespace('tests', description='Application Testing endpoints',path='/')
+menu = api.namespace('menu', description='Menu manipulation',path='/')
+order = api.namespace('orders', description='Orders placement and processing',path='/')
+
+#Models
 auth_login_ = api.model('User Login',{'type': fields.String('The user can be either ADMIN or CUSTOMER'),'name': fields.String('The username registered'),'password': fields.String('The users password')})
 auth_sign_up = api.model('User Sign Up',{'type': fields.String('The user can be either "ADMIN" or "CUSTOMER"'),'name': fields.String('The username registered'),'vendor_name': fields.String('The if user is Admin'),'password': fields.String('The users password'),'about': fields.String('Brief Users description'),'location': fields.String('The users location'),'image_url': fields.String('The users uploaded image'),'phone_no': fields.String('The users phone number'),'email': fields.String('The users email')})
 order_request = api.model('User Order request', { 'order_to': fields.String('The vendor of the item'), 'order_amount': fields.Float('The total transaction amount') , 'order_quantity': fields.Integer('The number of items to order'), 'item_id': fields.String('The ordered item ID') })
@@ -69,7 +77,7 @@ def authorize_admin(adm):
                 decode_token(logged_in_token)
 
             except:
-                return {'response':'Authorization error, Admin token passed is invalid','status':0,'data':'Admin token passed is invalid'}
+                return {'response':'Authorization error','status':0,'data':'Admin token passed is invalid'}
         else:
             return {'response':'Authorization error, No Admin key passed','status':0,'data':'No Admin key passed'}
         return adm(*args, **kwargs)    
@@ -409,31 +417,73 @@ class RelatedItems(Resource):
         result = ServiceSpace.get_related_items(self,item_id,category,app_state) #Return max three items from query
         return result
 
+class CategoryMenu(Resource):
+    def get(self,category):
+        '''Fetch all items as per category passed'''
+        result = ServiceSpace.get_category_items(self,category,app_state)
+        return result
+
+class VendorMenu(Resource):
+    def get(self,vendor_id):
+        '''Gets all items from a specific vendor'''
+        result = ServiceSpace.get_vendor_items(self,vendor_id,app_state)
+        return result
+
+class VendorsList(Resource):
+    def get(self):
+        '''Get all vendors data (Name and ID)'''
+        result = ServiceSpace.get_vendors(self,app_state)
+        return result
+
+class Testing(Resource):
+    def get(self):
+        '''Test for get method'''
+        return {'response':'This is a get test'}
+
+    def post(self):
+        '''Test post method'''
+        return {'response':'This is a post test'}
+
+    def put(self):
+        '''Test for put method'''
+        return {'response':'This is a put test'}
+
+    def delete(self):
+        '''Test delete method'''
+        return {'response':'This is a delete test'}
+
 #Authentication
-api.add_resource(Auth_Sign_Up,'/auth/signup')
-api.add_resource(Auth_Login,'/auth/login')
+auth.add_resource(Auth_Sign_Up,'/auth/signup')
+auth.add_resource(Auth_Login,'/auth/login')
 
 #Users actions
-api.add_resource(UsersOrders,'/users/orders')
-api.add_resource(UsersOrdersGet,'/users/orders/<string:status>')
+order.add_resource(UsersOrders,'/users/orders')
+order.add_resource(UsersOrdersGet,'/users/orders/<string:status>')
 
 #Administrators
-api.add_resource(AdminAllOrders,'/orders/<string:status>')
-api.add_resource(AdminSpecificOrders,'/orders/<int:order_id>')
+order.add_resource(AdminAllOrders,'/orders/<string:status>')
+order.add_resource(AdminSpecificOrders,'/orders/<int:order_id>')
 
 #Menu 
-api.add_resource(RequestMenu,'/menu')
+menu.add_resource(RequestMenu,'/menu')
+menu.add_resource(CategoryMenu,'/menu/<string:category>')
+menu.add_resource(VendorMenu,'/vendor/<string:vendor_id>')
+menu.add_resource(VendorsList,'/vendors')
 
 #Admin Menu
-api.add_resource(AdminMenu,'/admin/menu')
-api.add_resource(SpecificAdminMenu,'/admin/menu/<int:item_id>')
+menu.add_resource(AdminMenu,'/admin/menu')
+menu.add_resource(SpecificAdminMenu,'/admin/menu/<int:item_id>')
 
 #profile
-api.add_resource(AdminProfile,'/admin/profile')
-api.add_resource(UserProfile,'/user/profile')
+profile.add_resource(AdminProfile,'/admin/profile')
+profile.add_resource(UserProfile,'/user/profile')
 
 #add a comment
 api.add_resource(Comments, '/user/comment')
 
 #related Items Fetching
-api.add_resource(RelatedItems, '/related')
+menu.add_resource(RelatedItems, '/related')
+
+#tests
+test.add_resource(Testing, '/test')
+

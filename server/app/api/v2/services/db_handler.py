@@ -1,8 +1,10 @@
 import datetime
 import uuid
 import random
+import base64
 from werkzeug.security import generate_password_hash, check_password_hash
 from ....database.db_init import base_creation
+from ..routes.file_path import PathToImages 
 
 class ServiceSpace():
     
@@ -250,7 +252,7 @@ class ServiceSpace():
                     'item_name': result[1],
                     'details': result[2],
                     'price' : result[3],
-                    'image_url': result[4],
+                    'image_url': ServiceSpace.convert_to_base64(self,result[4]),
                     'item_id': result[5],
                     'vendor_id': result[6],
                     'category' : result[7]
@@ -329,7 +331,7 @@ class ServiceSpace():
         cur.execute(query)
         results = cur.fetchall() #Fetches data in a list
         row_count = cur.rowcount
-        orders_list = []
+        items_list = []
         if row_count < 1:
             return {'response':'Nothing here for you, Human!','mess':0}
         else:
@@ -339,13 +341,24 @@ class ServiceSpace():
                     'item_name': result[1],
                     'details': result[2],
                     'price' : result[3],
-                    'image_url': result[4],
+                    'image_url': ServiceSpace.convert_to_base64(self,result[4]),
                     'item_id': result[5],
                     'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),
                     'category' : result[7]
                     }
-                orders_list.append(item)
-            return {'items_list': orders_list}
+                items_list.append(item)
+            return {'items_list' : items_list}
+
+    def convert_to_base64(self,image_name):
+        '''Converts Image to a base 64 for json result'''
+        UPLOAD_FOLDER = PathToImages.img_path
+        with open((UPLOAD_FOLDER +'/'+ image_name), "rb") as image_file:
+            image_read = image_file.read() 
+            image_64_encode = base64.encodestring(image_read)
+            output = image_64_encode.decode("utf-8")
+            encoded_image = output
+            value = encoded_image
+            return value
 
     def getVendorDetails(self,app_state,vendor_id):
         '''Get details of the customer'''
@@ -445,7 +458,7 @@ class ServiceSpace():
                     'item_name': result[1],
                     'details': result[2],
                     'price' : result[3],
-                    'image_url': result[4],
+                    'image_url': ServiceSpace.convert_to_base64(self,result[4]),
                     'item_id': result[5],
                     'vendor_id': result[6],
                     'category' : result[7]
@@ -547,7 +560,7 @@ class ServiceSpace():
                     'item_name': result[1],
                     'details': result[2],
                     'price' : result[3],
-                    'image_url': result[4],
+                    'image_url': ServiceSpace.convert_to_base64(self,result[4]),
                     'item_id': result[5],
                     'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),                    
                     'category' : result[7]
@@ -573,7 +586,7 @@ class ServiceSpace():
                     'item_name': result[1],
                     'details': result[2],
                     'price' : result[3],
-                    'image_url': result[4],
+                    'image_url': ServiceSpace.convert_to_base64(self,result[4]),
                     'item_id': result[5],
                     'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),                    
                     'category' : result[7]
@@ -601,7 +614,7 @@ class ServiceSpace():
                     'item_name': result[1],
                     'details': result[2],
                     'price' : result[3],
-                    'image_url': result[4],
+                    'image_url': ServiceSpace.convert_to_base64(self,result[4]),
                     'item_id': result[5],
                     'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),                    
                     'category' : result[7]
@@ -630,3 +643,27 @@ class ServiceSpace():
                 vendors_list.append(item)
             return {'vendors_list': vendors_list}
 
+    def get_specific_item(self,app_state,item_id):
+        '''Fetch a specific item'''
+        db_name = ServiceSpace.get_db_status(self,app_state)
+        cur = base_creation(self,db_name)
+        query = "SELECT * FROM administrator_items WHERE item_id = '{}'".format(item_id)
+        print(query)
+        cur.execute(query)
+        results = cur.fetchall() #Fetches data in a list
+        row_count = cur.rowcount
+        if row_count < 1:
+            return {'response':'Could not find that item','status':0}
+        else:
+            print(results)
+            for result in results:
+                item = {
+                    'item_name': result[1],
+                    'details': result[2],
+                    'price' : result[3],
+                    'image_url': ServiceSpace.convert_to_base64(self,result[4]),
+                    'item_id': result[5],
+                    'vendor_id': ServiceSpace.getVendorDetails(self,app_state,result[6]),                    
+                    'category' : result[7]
+                    }
+            return item

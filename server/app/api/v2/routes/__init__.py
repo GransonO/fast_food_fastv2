@@ -1,5 +1,9 @@
-from flask import Flask, request
+import os
+from pathlib import Path
+from flask import Flask, request, redirect, url_for, send_from_directory, jsonify
 from flask_restplus import Resource,Api,fields
+from werkzeug.utils import secure_filename #image name changer
+import base64
 import datetime
 from functools import wraps
 import jwt
@@ -9,8 +13,15 @@ from app.secret import secrets
 from .validators import Validation
 
 app_state = 'Testing'  #'Developing','Testing','Production'
+
+path_to_folder = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(os.path.join(path_to_folder, 'static'), 'images') #Folder
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
 app = create_app(app_state)
 app.config['SECRET_KEY'] = secrets['jwt-key']
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 authorize_properties = {
     'logged_in_key' : { #For logged in operations
@@ -280,6 +291,7 @@ class RequestMenu(Resource):
     def get(self):
         '''Preview items of a specific restaurant'''      
         result = ServiceSpace.get_all_vendor_items(self,app_state)
+        
         return {'response':'Request Success','status':1,'data':result}
 
     @api.expect(new_item_details)
@@ -326,12 +338,17 @@ class RequestMenu(Resource):
         except KeyError:
             return {'response':'Request Error','status':0,'data':'Please enter the data as specified'}, 400
 
+class RequestSpecific(Resource):
+    def get(self,item_id):
+        '''Returns a specific Items details'''      
+        result = ServiceSpace.get_specific_item(self,app_state,item_id)        
+        return {'data' : result}
+
 class AdminMenu(Resource):    
     @api.doc(security='admin-key')
     @authorize_admin
     def get(self):
-        '''Get all the specific admins Item'''
-        '''Preview items of a specific restaurant'''    
+        '''Get all the specific admins Item'''  
         logged_in_token = request.headers['ADMIN-KEY']  
         vendor_id = decode_token(logged_in_token)
         result = ServiceSpace.get_specific_vendor_items(self,app_state,vendor_id)
@@ -452,7 +469,35 @@ class Testing(Resource):
         '''Test delete method'''
         return {'response':'This is a delete test'}
 
-#Authentication
+class ImageRequest(Resource):
+    def get(self,filename):
+        '''Load an image from the static/images folder'''  
+        with open((UPLOAD_FOLDER +'/'+ filename), "rb") as image_file:
+            image_read = image_file.read() 
+            image_64_encode = base64.encodestring(image_read)
+            output = image_64_encode.decode("utf-8")
+            print(output)
+            return {'image' : output}
+
+class ImageUpload(Resource):
+    def post(self):
+        '''Upload an image to the static/images folder'''
+        if 'file' not in request.files:
+            return {'response':'No file to upload'}
+        file = request.files['file']
+        if file.filename == '':
+            return {'response':'No Selected file to upload'}
+        if file and ImageUpload.allowed_file(self, file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            print(filename)
+            return {'response':'Upload Success','data':filename}
+
+    def allowed_file(self,filename):
+        return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+#Authenticate
 auth.add_resource(Auth_Sign_Up,'/auth/signup')
 auth.add_resource(Auth_Login,'/auth/login')
 
@@ -466,6 +511,7 @@ order.add_resource(AdminSpecificOrders,'/orders/<int:order_id>')
 
 #Menu 
 menu.add_resource(RequestMenu,'/menu')
+menu.add_resource(RequestSpecific,'/menu/<int:item_id>')
 menu.add_resource(CategoryMenu,'/menu/<string:category>')
 menu.add_resource(VendorMenu,'/vendor/<string:vendor_id>')
 menu.add_resource(VendorsList,'/vendors')
@@ -487,3 +533,6 @@ menu.add_resource(RelatedItems, '/related')
 #tests
 test.add_resource(Testing, '/test')
 
+#image_service
+api.add_resource(ImageUpload,'/image')
+api.add_resource(ImageRequest,'/image/<string:filename>')

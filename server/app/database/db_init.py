@@ -2,11 +2,11 @@ import psycopg2
 
 #Connects to the DB
 def base_creation(self,db_name):
-    Host = 'ec2-54-75-239-237.eu-west-1.compute.amazonaws.com'
-    db_name = 'd41f017o9eva2p'
-    User = 'hqomzgqqgfgcnp'
+    Host = 'ec2-79-125-14-195.eu-west-1.compute.amazonaws.com'
+    db_name = 'dedk65lu11g1fu'
+    User = 'klwlbptnwhgrfu'
     Port = '5432'
-    Password = '760c64769ce69ec4829cafb57c00cd44acf12b7b6f4d729b9d51a2214a15f0fd'
+    Password = '047e97a8129573fee0f42072fc7220b544d1068f4cf56ffd37df008db6c05ad2'
     
     try:
         #conn = psycopg2.connect("dbname={} user={} password={} host={} port={}".format(db_name,User,Password,Host,Port))

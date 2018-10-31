@@ -481,8 +481,8 @@ class ImageRequest(Resource):
                 print(output)
                 return {'image' : output, 'status' : 1}
 
-        except FileNotFoundError as error:
-            return {'image' : 'Could not be found','status': 0, 'error' : error}
+        except FileNotFoundError:
+            return {'image' : 'Could not be found','status': 0}
 
 class ImageUpload(Resource):
     def post(self):

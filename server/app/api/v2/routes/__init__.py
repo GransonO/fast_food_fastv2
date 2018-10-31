@@ -472,12 +472,17 @@ class Testing(Resource):
 class ImageRequest(Resource):
     def get(self,filename):
         '''Load an image from the static/images folder'''  
-        with open((UPLOAD_FOLDER +'/'+ filename), "rb") as image_file:
-            image_read = image_file.read() 
-            image_64_encode = base64.encodestring(image_read)
-            output = image_64_encode.decode("utf-8")
-            print(output)
-            return {'image' : output}
+        try:
+                
+            with open((UPLOAD_FOLDER +'/'+ filename), "rb") as image_file:
+                image_read = image_file.read() 
+                image_64_encode = base64.encodestring(image_read)
+                output = image_64_encode.decode("utf-8")
+                print(output)
+                return {'image' : output, 'status' : 1}
+
+        except FileNotFoundError as error:
+            return {'image' : 'Could not be found','status': 0, 'error' : error}
 
 class ImageUpload(Resource):
     def post(self):

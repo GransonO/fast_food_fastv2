@@ -632,7 +632,7 @@ class ServiceSpace():
         row_count = cur.rowcount
         vendors_list = []
         if row_count < 1:
-            return {'response':'No vendors in her, Do some marketing bro!','status':0}
+            return {'response':'No vendors in here, Do some marketing bro!','status':0}
         else:
             print(results)
             for result in results:

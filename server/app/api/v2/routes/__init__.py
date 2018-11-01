@@ -14,14 +14,13 @@ from .validators import Validation
 
 app_state = 'Testing'  #'Developing','Testing','Production'
 
-path_to_folder = os.path.dirname(os.path.abspath(__file__))
+path_to_folder = os.path.dirname(__file__)
 UPLOAD_FOLDER = os.path.join(os.path.join(path_to_folder, 'static'), 'images') #Folder
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 app = create_app(app_state)
 app.config['SECRET_KEY'] = secrets['jwt-key']
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 authorize_properties = {
     'logged_in_key' : { #For logged in operations
@@ -474,7 +473,7 @@ class ImageRequest(Resource):
         '''Load an image from the static/images folder'''  
         try:
                 
-            with open((UPLOAD_FOLDER +'/'+ filename), "rb") as image_file:
+            with open(os.path.join(UPLOAD_FOLDER, filename), "rb") as image_file:
                 image_read = image_file.read() 
                 image_64_encode = base64.encodestring(image_read)
                 output = image_64_encode.decode("utf-8")
